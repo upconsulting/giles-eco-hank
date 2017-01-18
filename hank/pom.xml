@@ -18,6 +18,7 @@
         <hank.baseDir></hank.baseDir>
         <hank.tmp.folder></hank.tmp.folder>
         <hank.db_files></hank.db_files>
+        <docker.location>/usr/local/bin/docker</docker.location>
     </properties>
 
     <dependencies>

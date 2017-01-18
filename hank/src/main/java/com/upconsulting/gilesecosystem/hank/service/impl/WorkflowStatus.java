@@ -5,5 +5,6 @@ public enum WorkflowStatus {
     LAYOUT_ANALYZED,
     LINES_RECOGNIZED,
     TEXT_GENERATED,
-    HOCR_GENERATED
+    HOCR_GENERATED,
+    ERROR
 }

@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.service.impl.OCRWorkflowManager;
 
@@ -45,23 +47,25 @@ public class UploadController {
             @RequestParam("file") MultipartFile[] files,
             Locale locale) throws FileStorageException, IOException, UnstorableObjectException {
 
-        List<ImageFile> imageFiles = manager.startOCR(principal.getName(), files);
-
-        
-//        List<StorageStatus> statuses = uploadHelper.processUpload(docAccess, DocumentType.SINGLE_PAGE, files, null, user);
+        List<ImageFile> imageFiles;
+        try {
+            imageFiles = manager.startOCR(principal.getName(), files);
+        } catch (DockerConnectionException e) {
+            return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode root = mapper.createObjectNode();
         ArrayNode filesNode = root.putArray("files");
 
-        for (ImageFile file : imageFiles) {
+        for (IImageFile file : imageFiles) {
             ObjectNode fileNode = mapper.createObjectNode();
             fileNode.put("name", file.getFilename());
             fileNode.put("uploadId", file.getUploadId());
             
             filesNode.add(fileNode);
         }
-//
+        
         return new ResponseEntity<String>(root.toString(), HttpStatus.OK);
     }
 }

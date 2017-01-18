@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.upconsulting.gilesecosystem.hank.db.impl.ImageFileDBClient;
+import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
+import com.upconsulting.gilesecosystem.hank.service.IOctopusBridge;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
@@ -27,12 +29,16 @@ public class OCRWorkflowManager {
     @Autowired
     private ImageFileDBClient imageFileDBClient;
     
-    public List<ImageFile> startOCR(String username, MultipartFile[] files) throws FileStorageException, IOException, UnstorableObjectException {
+    @Autowired
+    private IOctopusBridge octopusBridge;
+    
+    public List<ImageFile> startOCR(String username, MultipartFile[] files) throws FileStorageException, IOException, UnstorableObjectException, DockerConnectionException {
         
         List<ImageFile> imageFiles = new ArrayList<ImageFile>();
         for (MultipartFile f : files) {
             ImageFile file = new ImageFile(f.getOriginalFilename());
             file.setId(imageFileDBClient.generateId());
+            file.setUsername(username);
            
             byte[] bytes = f.getBytes();
             fileStorageManager.saveFile(username, file.getId(), null, file.getFilename(), bytes);
@@ -53,6 +59,14 @@ public class OCRWorkflowManager {
             imageFileDBClient.saveImageFile(file);
             
             imageFiles.add(file);
+            
+            boolean success = octopusBridge.runNlbin(file);
+            if (success) {
+                file.setStatus(WorkflowStatus.BINARIZED);
+            } else {
+                file.setStatus(WorkflowStatus.ERROR);
+            }
+            imageFileDBClient.saveImageFile(file);
         }
         
         return imageFiles;
