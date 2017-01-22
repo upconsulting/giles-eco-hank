@@ -25,6 +25,11 @@
     <definition name="files/uploads" extends="base.definition">
         <put-attribute name="content" value="/WEB-INF/views/files/uploads.jsp" />    
     </definition>
+    
+    <!--  models  -->
+    <definition name="models/upload" extends="base.definition">
+        <put-attribute name="content" value="/WEB-INF/views/models/upload.jsp" />    
+    </definition>
 	
 	
 </tiles-definitions>

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.upconsulting.gilesecosystem.hank.db.impl.ImageFileDBClient;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
-import com.upconsulting.gilesecosystem.hank.web.pages.ImageFilePage;
+import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
 import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 import edu.asu.diging.gilesecosystem.util.store.IPropertiesCopier;
@@ -32,14 +32,14 @@ public class ListImageFilesController {
     @RequestMapping(value = "/files/uploads")
     public String showUploads(Principal principal, Model model) {
         List<ImageFile> files = imageFileDb.getImageFiles(principal.getName());
-        List<ImageFilePage> pages = new ArrayList<ImageFilePage>();
+        List<ImageFileForm> pages = new ArrayList<ImageFileForm>();
         files.forEach(f -> pages.add(createPage(f)));
         model.addAttribute("files", pages);
         return "files/uploads";
     }
     
-    private ImageFilePage createPage(ImageFile file) {
-        ImageFilePage p = new ImageFilePage(); 
+    private ImageFileForm createPage(ImageFile file) {
+        ImageFileForm p = new ImageFileForm(); 
         //copier.copyObject(file, p);
         p.setId(file.getId());
         p.setProcessingFolder(file.getProcessingFolder());

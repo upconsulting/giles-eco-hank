@@ -7,7 +7,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,7 @@ import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
 import edu.asu.diging.gilesecosystem.util.store.objectdb.DatabaseClient;
 
-@Transactional("txmanager_data")
+@Transactional
 @Component
 public class ImageFileDBClient extends DatabaseClient<IImageFile> {
 

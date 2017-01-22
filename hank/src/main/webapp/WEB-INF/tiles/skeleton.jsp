@@ -62,6 +62,10 @@
                 <a href="<c:url value="/files/uploads" />">Your Uploads</a>
             </li>
             
+            <li role="presentation">
+                <a href="<c:url value="/models/upload" />">Upload Model</a>
+            </li>
+            
           	<li role="presentation">
          	 	<form action="<c:url value="/logout" />" method="POST">
          	 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
