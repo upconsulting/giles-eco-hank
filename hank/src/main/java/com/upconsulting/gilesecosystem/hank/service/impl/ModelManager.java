@@ -1,5 +1,7 @@
 package com.upconsulting.gilesecosystem.hank.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +51,16 @@ public class ModelManager implements IModelManager {
             logger.error("Could not store element.", e);
         }
         return ocrModel;
+    }
+    
+    @Override
+    public List<IOCRModel> getModels(String username, int start, int numberOfResults) {
+        if (start < 0) {
+            start = 0;
+        }
+        if (numberOfResults < 0) {
+            numberOfResults = 20;
+        }
+        return modelDb.getModels(username, start, numberOfResults);
     }
 }

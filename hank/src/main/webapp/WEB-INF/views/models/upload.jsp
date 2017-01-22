@@ -10,18 +10,19 @@
 	 <div class="form-group">
 	   <label for="title">Title:</label>
 	   <form:input class="form-control" type="text" path="title" id="title" />
-	   <form:errors path="title" />
+	   <small><form:errors class="error" path="title" /></small>
 	 </div>
 	 
 	 <div class="form-group">
        <label for="title">Description:</label>
        <form:textarea class="form-control" path="description" id="description" />
-       <form:errors path="description" />
+        <small><form:errors class="error" path="description" /></small>
      </div>
      
      <div class="form-group">
         <label for="modelfile">Model file:</label>
         <input type="file" class="form-control" name="modelfile" />
+        <small class="error">${fileError}</small>
      </div>
  
     <button type="submit" class="btn btn-primary btn-md">Upload</button>

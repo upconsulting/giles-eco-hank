@@ -1,7 +1,11 @@
 package com.upconsulting.gilesecosystem.hank.db.impl;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,5 +38,13 @@ public class OCRModelDBClient extends DatabaseClient<IOCRModel> implements IOCRM
         return em;
     }
     
+    @Override
+    public List<IOCRModel> getModels(String username, int start, int pageSize) {
+        CriteriaQuery<IOCRModel> query = em.getCriteriaBuilder().createQuery(IOCRModel.class);
+        Root<OCRModel> model = query.from(OCRModel.class);
+        query.select(model);
+        
+        return em.createQuery(query).setFirstResult(start).setMaxResults(pageSize).getResultList();
+    }
     
 }

@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,9 +21,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
 import com.upconsulting.gilesecosystem.hank.web.forms.ModelForm;
+import com.upconsulting.gilesecosystem.hank.web.validators.ModelFormValidator;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
-import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 
 @Controller
 public class UploadModelController {
@@ -28,6 +32,11 @@ public class UploadModelController {
 
     @Autowired
     private IModelManager modelManager;
+    
+    @InitBinder
+    public void initBinders(WebDataBinder binder) {
+        binder.addValidators(new ModelFormValidator());
+    }
 
     @RequestMapping(value = "/models/upload")
     public String showUploadPage(Model model) {
@@ -38,9 +47,17 @@ public class UploadModelController {
     }
 
     @RequestMapping(value = "/models/upload", method = RequestMethod.POST)
-    public String uploadModel(@ModelAttribute ModelForm modelForm,
+    public String uploadModel(@Validated @ModelAttribute ModelForm modelForm, BindingResult results, Model model,
             @RequestParam("modelfile") MultipartFile modelfile, Principal principal, RedirectAttributes redirectAttrs) {
 
+        if (modelfile.getSize() == 0) {
+            model.addAttribute("fileError", "Please add a model file.");
+            return "models/upload";
+        }
+        if (results.hasErrors()) {
+            return "models/upload";
+        }
+        
         if (modelfile != null) {
             try {
                 modelManager.createModel(principal.getName(),
