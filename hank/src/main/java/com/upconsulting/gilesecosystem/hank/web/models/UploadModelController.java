@@ -51,7 +51,7 @@ public class UploadModelController {
             @RequestParam("modelfile") MultipartFile modelfile, Principal principal, RedirectAttributes redirectAttrs) {
 
         if (modelfile.getSize() == 0) {
-            model.addAttribute("fileError", "Please add a model file.");
+            model.addAttribute("fileError", "upload_model_file_missing");
             return "models/upload";
         }
         if (results.hasErrors()) {

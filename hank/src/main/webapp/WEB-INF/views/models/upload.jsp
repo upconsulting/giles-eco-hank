@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
 <h2>Upload new model</h2>
 
@@ -22,7 +23,7 @@
      <div class="form-group">
         <label for="modelfile">Model file:</label>
         <input type="file" class="form-control" name="modelfile" />
-        <small class="error">${fileError}</small>
+        <small class="error"><c:if test="${not empty fileError}"><spring:message code="${fileError}" /></c:if></small>
      </div>
  
     <button type="submit" class="btn btn-primary btn-md">Upload</button>
