@@ -62,7 +62,15 @@
                 <a href="<c:url value="/files/uploads" />">Your Uploads</a>
             </li>
             
-          	<li role="presentation">
+            <li role="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Models<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                <li><a href="<c:url value="/models" />" >Your Models</a></li>
+                <li><a href="<c:url value="/models/upload" />">Upload Model</a></li>
+              </ul>
+            </li>
+            
+            <li role="presentation">
          	 	<form action="<c:url value="/logout" />" method="POST">
          	 	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
   				<button class="btn-link" type="submit" title="Logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button>

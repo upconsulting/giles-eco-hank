@@ -1,8 +1,8 @@
-package com.upconsulting.gilesecosystem.hank.web.pages;
+package com.upconsulting.gilesecosystem.hank.web.forms;
 
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 
-public class ImageFilePage extends ImageFile {
+public class ImageFileForm extends ImageFile {
 
     private String[] processingFiles;
 
