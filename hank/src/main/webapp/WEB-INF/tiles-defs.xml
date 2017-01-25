@@ -26,6 +26,10 @@
         <put-attribute name="content" value="/WEB-INF/views/files/uploads.jsp" />    
     </definition>
     
+    <definition name="files/image" extends="base.definition">
+        <put-attribute name="content" value="/WEB-INF/views/files/imagefile.jsp" />    
+    </definition>
+    
     <!--  models  -->
     <definition name="models/upload" extends="base.definition">
         <put-attribute name="content" value="/WEB-INF/views/models/upload.jsp" />    

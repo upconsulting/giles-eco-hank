@@ -29,7 +29,7 @@ public class OCRModelDBClient extends DatabaseClient<IOCRModel> implements IOCRM
     }
 
     @Override
-    protected IOCRModel getById(String id) {
+    public IOCRModel getById(String id) {
         return em.find(OCRModel.class, id);
     }
 

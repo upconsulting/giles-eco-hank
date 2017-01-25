@@ -5,7 +5,7 @@
 <ul>
 <c:forEach items="${files}" var="file">
 
-<li>${file.id}</li>
+<li><a href="<c:url value="/files/image/${file.id}" />">${file.id}</a></li>
 <ul>
     <c:forEach items="${file.processingFiles}" var="f">
         <li>${file.processingFolder}/${f}</li>

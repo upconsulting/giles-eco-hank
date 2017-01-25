@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import com.upconsulting.gilesecosystem.hank.model.IOCRModel;
+import com.upconsulting.gilesecosystem.hank.service.impl.ModelManager;
 
 @Entity
 public class OCRModel implements IOCRModel {
@@ -19,6 +21,20 @@ public class OCRModel implements IOCRModel {
     private String description;
     
     private List<String> derivedFrom;
+    
+    /**
+     * We don't want to persist this path, since it might change whenever
+     * the storage folder is moved.
+     * Let the {@link ModelManager} fill that one.
+     */
+    @Transient
+    private String path;
+    
+    /**
+     * The relative path to the model inside a user's folder.
+     */
+    @Transient
+    private String relativePath;
 
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.model.impl.IOCRModel#getId()
@@ -114,5 +130,25 @@ public class OCRModel implements IOCRModel {
     @Override
     public void setDerivedFrom(List<String> derivedFrom) {
         this.derivedFrom = derivedFrom;
+    }
+    
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public String getRelativePath() {
+        return relativePath;
+    }
+
+    @Override
+    public void setRelativePath(String relativePath) {
+        this.relativePath = relativePath;
     }
 }

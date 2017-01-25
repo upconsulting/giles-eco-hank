@@ -1,5 +1,6 @@
 package com.upconsulting.gilesecosystem.hank.service.impl;
 
+import java.io.File;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -62,5 +63,14 @@ public class ModelManager implements IModelManager {
             numberOfResults = 20;
         }
         return modelDb.getModels(username, start, numberOfResults);
+    }
+    
+    @Override
+    public IOCRModel getModel(String id) {
+        IOCRModel model = modelDb.getById(id);
+        String parentPath = fileStorageManager.getAndCreateStoragePath(model.getUsername(), MODEL_FOLDER, model.getId());
+        model.setPath(parentPath + File.separator + model.getFilename());
+        model.setRelativePath(MODEL_FOLDER + File.separator + model.getId() + File.separator + model.getFilename());
+        return model;
     }
 }

@@ -17,14 +17,15 @@
 <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 
     <div class="form-group">
-        <label>Make uploaded files: </label> <select class="form-control"
-            id="accessInput">
-            <option value="PRIVATE" selected>Private</option>
-            <option value="PUBLIC">Public</option>
+        <label>Select model: </label> <select class="form-control"
+            id="selectedModel">
+            <c:forEach items="${models}" var="ocrmodel">
+                <option value="${ocrmodel.id}">${ocrmodel.filename}</option>
+            </c:forEach>
         </select>
     </div>
     <br>
-    <div class="form-group" id="upload-field">
+    <div style="margin-top: 10px;" class="form-group" id="upload-field">
         <span class="btn btn-success fileinput-button"> <i
             class="fa fa-plus" aria-hidden="true"></i> <span>Add files...</span>
             <!-- The file input field used as target for the file upload widget -->
@@ -56,8 +57,6 @@
     </div>
 </form>
 
-<a href="" id="jarsLink" class="btn btn-primary disabled">Add
-    metadata in Jars</a>
 
 <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
 <script
@@ -105,10 +104,10 @@
             url : '<c:url value="/files/upload" />?${_csrf.parameterName}=${_csrf.token}',
             singleFileUploads : false,
             submit : function(e, data) {
-                var input = $('#accessInput');
+                var input = $('#selectedModel');
                 var csrf = $("#csrfInput");
                 data.formData = {
-                    access : input.val(),
+                     selectedModel : input.val(),
                 };
                 return true;
             },

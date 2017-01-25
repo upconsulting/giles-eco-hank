@@ -30,4 +30,12 @@ public interface IOCRModel extends IStorableObject {
 
     public abstract void setDerivedFrom(List<String> derivedFrom);
 
+    public abstract void setPath(String path);
+
+    public abstract String getPath();
+
+    public abstract void setRelativePath(String relativePath);
+
+    public abstract String getRelativePath();
+
 }

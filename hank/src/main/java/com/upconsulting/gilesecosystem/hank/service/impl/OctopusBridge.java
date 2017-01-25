@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.model.IOCRModel;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.service.IOctopusBridge;
 import com.upconsulting.gilesecosystem.hank.util.Properties;
@@ -36,13 +37,42 @@ public class OctopusBridge implements IOctopusBridge {
      */
     @Override
     public boolean runNlbin(ImageFile imageFile) throws DockerConnectionException {
+        String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
+        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-nlbin /data/%s -o /data/%s",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), PROCESSING_FOLDER);
+        
+        boolean success = runCommand(cmd);
+
+        if (success) {
+            imageFile.setProcessingFolder(PROCESSING_FOLDER);
+        } 
+        return true;
+    }
+    
+    @Override
+    public boolean runPageLayoutAnalysis(ImageFile imageFile) throws DockerConnectionException {
+        String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
+        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-gpageseg '/data/%s/????.bin.png'",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, PROCESSING_FOLDER);
+        
+        return runCommand(cmd);
+    }
+    
+    @Override
+    public boolean runLineRecognition(ImageFile imageFile, IOCRModel model) throws DockerConnectionException {
+        String modelPath = model.getRelativePath();
+        String userFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), null, null) + File.separator;
+        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), PROCESSING_FOLDER);
+        
+        return runCommand(cmd);
+    }
+    
+    private boolean runCommand(String cmd) throws DockerConnectionException {
         Process p = null;
         try {
-            String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-            String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-nlbin /data/%s -o /data/%s",
-                    propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), PROCESSING_FOLDER);
             logger.debug("Running command: " + cmd);
-            p = Runtime.getRuntime().exec(cmd);
+            p = Runtime.getRuntime().exec(new String[] { "bash", "-c", cmd });
         } catch (IOException e) {
             throw new DockerConnectionException("Could not run Docker.", e);
         }
@@ -64,8 +94,6 @@ public class OctopusBridge implements IOctopusBridge {
                 return false;
             }
         }
-
-        imageFile.setProcessingFolder(PROCESSING_FOLDER);
         return true;
     }
 }

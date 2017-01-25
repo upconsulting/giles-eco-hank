@@ -1,5 +1,6 @@
 package com.upconsulting.gilesecosystem.hank.service;
 
+import java.io.File;
 import java.util.List;
 
 import com.upconsulting.gilesecosystem.hank.model.IOCRModel;
@@ -12,5 +13,7 @@ public interface IModelManager {
             String description, byte[] content) throws FileStorageException;
 
     public abstract List<IOCRModel> getModels(String username, int start, int numberOfResults);
+
+    public abstract IOCRModel getModel(String id);
 
 }
