@@ -24,7 +24,7 @@ public class ImageFileDBClient extends DatabaseClient<IImageFile> {
     @PersistenceContext(unitName="DataPU")
     private EntityManager em;
     
-    public IImageFile saveImageFile(ImageFile file) throws UnstorableObjectException {
+    public IImageFile saveImageFile(IImageFile file) throws UnstorableObjectException {
         IImageFile existing = getById(file.getId());
         
         if (existing == null) {

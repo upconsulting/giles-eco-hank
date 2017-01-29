@@ -24,7 +24,7 @@ import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
-import com.upconsulting.gilesecosystem.hank.service.impl.OCRWorkflowManager;
+import com.upconsulting.gilesecosystem.hank.workflow.impl.OCRWorkflowManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;

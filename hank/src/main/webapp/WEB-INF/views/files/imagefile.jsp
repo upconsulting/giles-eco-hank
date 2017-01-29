@@ -8,33 +8,25 @@
 </div>
 
 <div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Processing Folder</h3>
-  </div>
-  <div class="panel-body">
-    <ul>
-    <c:forEach items="${image.processingFiles}" var="f">
-        <li>${f}</li>
-    </c:forEach>
-    </ul>
-  </div>
-</div>
 
-<c:forEach items="${image.lineFolders}" var="lineFolder">
+<c:forEach items="${image.imageFile.ocrRuns}" var="run">
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">Subfolder: ${lineFolder.key}</h3>
+    <h3 class="panel-title">OCR run on ${run.date}</h3>
   </div>
   <div class="panel-body">
+    Model used: <b>${run.model.title}</b> (${run.model.filename})
+    <br>
+    Steps completed:
     <ul>
-    <c:forEach items="${lineFolder.value}" var="f">
-        <li>${f}</li>
+    <c:forEach items="${run.steps}" var="step">
+        <li>
+            <c:if test="${step.status == 'SUCCEEDED'}"><span class="label label-success">Succeeded</span></c:if><c:if test="${step.status == 'FAILED' }"><span class="label label-danger">Failed</span></c:if> ${step.stepType} at ${step.date} 
+        </li>
     </c:forEach>
     </ul>
   </div>
 </div>
 </c:forEach>
-</div>
 
 </div>

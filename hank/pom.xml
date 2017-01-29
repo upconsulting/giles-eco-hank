@@ -94,6 +94,13 @@
             <artifactId>spring-aop</artifactId>
             <version>${org.springframework-version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-aspects -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${org.springframework-version}</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -187,7 +194,7 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
         </dependency>
-        
+
         <!-- Apache Commons FileUpload -->
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -230,11 +237,16 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.openjpa/openjpa -->
+        <!-- <dependency> <groupId>org.apache.openjpa</groupId> <artifactId>openjpa</artifactId> 
+            <version>2.4.2</version> </dependency> -->
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa</artifactId>
-            <version>2.4.2</version>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.6.4</version>
         </dependency>
+
 
     </dependencies>
 
@@ -251,37 +263,52 @@
                 </excludes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <filtering>true</filtering>
-                            <directory>src/main/webapp</directory>
-                            <includes>
-                                <include>**/*</include>
-                            </includes>
-                            <excludes>
-                                <exclude>**/*.woff</exclude>
-                                <exclude>**/*.ttf</exclude>
-                                <exclude>**/*.woff2</exclude>
-                            </excludes>
-                        </resource>
+        <pluginManagement>
 
-                    </webResources>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <webResources>
+                            <resource>
+                                <filtering>true</filtering>
+                                <directory>src/main/webapp</directory>
+                                <includes>
+                                    <include>**/*</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>**/*.woff</exclude>
+                                    <exclude>**/*.ttf</exclude>
+                                    <exclude>**/*.woff2</exclude>
+                                </excludes>
+                            </resource>
+
+                        </webResources>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>aspectj-maven-plugin</artifactId>
+                    <version>1.9</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>

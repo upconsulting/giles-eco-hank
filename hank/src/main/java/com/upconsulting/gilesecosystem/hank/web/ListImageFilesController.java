@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.upconsulting.gilesecosystem.hank.db.impl.ImageFileDBClient;
+import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
@@ -38,7 +39,7 @@ public class ListImageFilesController {
         return "files/uploads";
     }
     
-    private ImageFileForm createPage(ImageFile file) {
+    private ImageFileForm createPage(IImageFile file) {
         ImageFileForm p = new ImageFileForm(); 
         //copier.copyObject(file, p);
         p.setId(file.getId());

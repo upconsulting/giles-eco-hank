@@ -37,6 +37,7 @@ public class ImageFileController {
         IImageFile imageFile = imageManager.getImageFile(id);
         
         ImageFileForm p = new ImageFileForm();
+        p.setImageFile(imageFile);
         p.setId(imageFile.getId());
         p.setFilename(imageFile.getFilename());
         p.setProcessingFolder(imageFile.getProcessingFolder());
