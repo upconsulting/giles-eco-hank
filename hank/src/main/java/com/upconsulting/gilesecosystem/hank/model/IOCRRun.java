@@ -27,4 +27,8 @@ public interface IOCRRun extends IStorableObject {
 
     public abstract IRunStep setStepStatus(StepType type, StepStatus status);
 
+    public abstract void setHocrFile(String hocrFile);
+
+    public abstract String getHocrFile();
+
 }

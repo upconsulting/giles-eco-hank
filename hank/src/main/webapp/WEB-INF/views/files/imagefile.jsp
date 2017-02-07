@@ -25,6 +25,8 @@
         </li>
     </c:forEach>
     </ul>
+    
+    <b>OCR Result: </b><a href="<c:url value="/files/image/${image.id}/${run.id}/text" />">${run.hocrFile}</a>
   </div>
 </div>
 </c:forEach>

@@ -24,6 +24,7 @@ import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
+import com.upconsulting.gilesecosystem.hank.workflow.IUploadManager;
 import com.upconsulting.gilesecosystem.hank.workflow.impl.OCRWorkflowManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
@@ -36,7 +37,7 @@ public class UploadController {
             .getLogger(UploadController.class);
     
     @Autowired
-    private OCRWorkflowManager manager;
+    private IUploadManager uploadManager;
     
     @Autowired
     private IModelManager modelManager;
@@ -52,9 +53,9 @@ public class UploadController {
             @RequestParam("file") MultipartFile[] files,
             Locale locale) throws FileStorageException, IOException, UnstorableObjectException {
 
-        List<ImageFile> imageFiles;
+        List<IImageFile> imageFiles;
         try {
-            imageFiles = manager.startOCR(principal.getName(), selectedModel, files);
+            imageFiles = uploadManager.processFiles(principal.getName(), selectedModel, files);
         } catch (DockerConnectionException e) {
             return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
         }

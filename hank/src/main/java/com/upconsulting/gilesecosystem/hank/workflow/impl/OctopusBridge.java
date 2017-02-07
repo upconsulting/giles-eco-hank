@@ -12,8 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
-import com.upconsulting.gilesecosystem.hank.model.IOCRModel;
-import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
+import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.util.Properties;
 import com.upconsulting.gilesecosystem.hank.workflow.IOctopusBridge;
 
@@ -22,8 +21,6 @@ import edu.asu.diging.gilesecosystem.util.properties.IPropertiesManager;
 
 @Service
 public class OctopusBridge implements IOctopusBridge {
-
-    private final String PROCESSING_FOLDER = "processing";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -37,36 +34,52 @@ public class OctopusBridge implements IOctopusBridge {
      * @see com.upconsulting.gilesecosystem.hank.service.impl.IOctopusBridge#runNlbin(com.upconsulting.gilesecosystem.hank.model.impl.ImageFile)
      */
     @Override
-    public boolean runNlbin(IImageFile imageFile) throws DockerConnectionException {
+    public boolean runNlbin(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
         String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-nlbin /data/%s -o /data/%s",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), PROCESSING_FOLDER);
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), run.getId());
         
         boolean success = runCommand(cmd);
 
         if (success) {
-            imageFile.setProcessingFolder(PROCESSING_FOLDER);
+            imageFile.setProcessingFolder(run.getId());
         } 
         return true;
     }
     
     @Override
-    public boolean runPageLayoutAnalysis(IImageFile imageFile) throws DockerConnectionException {
+    public boolean runPageLayoutAnalysis(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
         String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-gpageseg '/data/%s/????.bin.png'",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, PROCESSING_FOLDER);
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, run.getId());
         
         return runCommand(cmd);
     }
     
     @Override
-    public boolean runLineRecognition(IImageFile imageFile, IOCRModel model) throws DockerConnectionException {
-        String modelPath = model.getRelativePath();
+    public boolean runLineRecognition(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
+        String modelPath = run.getModel().getRelativePath();
         String userFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), null, null) + File.separator;
         String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), PROCESSING_FOLDER);
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), run.getId());
         
         return runCommand(cmd);
+    }
+    
+    @Override
+    public String runHOCROutput(IImageFile imageFile, IOCRRun run, String outputFilename) throws DockerConnectionException {
+        String runFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), run.getId()) + File.separator;
+        String hocrFileending = ".html";
+        
+        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-hocr '????/??????.bin.png' -o %s%s",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), runFolder, outputFilename, hocrFileending);
+        
+        boolean success = runCommand(cmd);
+        if (success) {
+            return outputFilename + hocrFileending;
+        }
+        
+        return null;
     }
     
     private boolean runCommand(String cmd) throws DockerConnectionException {

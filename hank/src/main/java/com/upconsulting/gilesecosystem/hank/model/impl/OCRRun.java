@@ -22,6 +22,7 @@ public class OCRRun implements IOCRRun {
     @Id
     private String id;
     private LocalDateTime date;
+    private String hocrFile;
 
     @ManyToOne(targetEntity=OCRModel.class)
     private IOCRModel model;
@@ -118,5 +119,15 @@ public class OCRRun implements IOCRRun {
         }
         
         return null;
+    }
+
+    @Override
+    public String getHocrFile() {
+        return hocrFile;
+    }
+
+    @Override
+    public void setHocrFile(String hocrFile) {
+        this.hocrFile = hocrFile;
     }
 }
