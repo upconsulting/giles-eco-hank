@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
-import com.upconsulting.gilesecosystem.hank.service.impl.ImageFileManager;
+import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
+import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
+import com.upconsulting.gilesecosystem.hank.service.IModelManager;
 import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
 import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
@@ -26,10 +29,13 @@ import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 public class ImageFileController {
     
     @Autowired
-    private ImageFileManager imageManager; 
+    private IImageFileManager imageManager; 
     
     @Autowired
     private IFileStorageManager storageManager;
+    
+    @Autowired
+    private IModelManager modelManager;
 
 
     @RequestMapping(value = "/files/image/{id}")
@@ -37,11 +43,12 @@ public class ImageFileController {
         IImageFile imageFile = imageManager.getImageFile(id);
         
         ImageFileForm p = new ImageFileForm();
+        p.setImageFile(imageFile);
         p.setId(imageFile.getId());
         p.setFilename(imageFile.getFilename());
         p.setProcessingFolder(imageFile.getProcessingFolder());
         
-        byte[] imageBytes = storageManager.getFileContent(principal.getName(), imageFile.getId(), null, imageFile.getUsername());
+        byte[] imageBytes = storageManager.getFileContent(principal.getName(), imageFile.getId(), null, imageFile.getFilename());
         p.setContent(imageBytes);
         
         String imageFolder = storageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null);
@@ -70,11 +77,14 @@ public class ImageFileController {
             }
         });
         
-        for (File folder : folders) {
-            p.getLineFolders().put(folder.getName(), folder.list());
+        if (folders != null) {
+            for (File folder : folders) {
+                p.getLineFolders().put(folder.getName(), folder.list());
+            }
         }
         
         model.addAttribute("image", p);
+        model.addAttribute("models", modelManager.getModels(principal.getName(), 0, 40));
         return "files/image";
     }
     
@@ -94,5 +104,34 @@ public class ImageFileController {
         }
 
         return new ResponseEntity<String>(HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/files/image/{id}/{runId}/text")
+    public ResponseEntity<String> getText(HttpServletResponse response, @PathVariable String id, @PathVariable String runId, Principal principal) {
+        IImageFile file = imageManager.getImageFile(id);
+        
+        IOCRRun foundRun = null;
+        if (file.getOcrRuns() != null) {
+            try  {
+                foundRun = file.getOcrRuns().stream().filter(run -> run.getId().equals(runId)).findFirst().get();
+            } catch (NoSuchElementException ex) {
+                return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            }
+        }
+        
+        if (foundRun != null) {
+            byte[] content = storageManager.getFileContent(principal.getName(), file.getId(), foundRun.getId(), foundRun.getHocrFile());
+            response.setHeader("Content-disposition", "filename=\"" + foundRun.getHocrFile() + "\""); 
+            try {
+                response.getOutputStream().write(content);
+                response.getOutputStream().close();
+            } catch (IOException e) {
+                return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            return new ResponseEntity<String>(HttpStatus.OK);
+        }
+        
+        return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
     }
 }

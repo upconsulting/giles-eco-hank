@@ -22,9 +22,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
-import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
-import com.upconsulting.gilesecosystem.hank.service.impl.OCRWorkflowManager;
+import com.upconsulting.gilesecosystem.hank.workflow.IUploadManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
@@ -36,7 +35,7 @@ public class UploadController {
             .getLogger(UploadController.class);
     
     @Autowired
-    private OCRWorkflowManager manager;
+    private IUploadManager uploadManager;
     
     @Autowired
     private IModelManager modelManager;
@@ -52,9 +51,9 @@ public class UploadController {
             @RequestParam("file") MultipartFile[] files,
             Locale locale) throws FileStorageException, IOException, UnstorableObjectException {
 
-        List<ImageFile> imageFiles;
+        List<IImageFile> imageFiles;
         try {
-            imageFiles = manager.startOCR(principal.getName(), selectedModel, files);
+            imageFiles = uploadManager.processFiles(principal.getName(), selectedModel, files);
         } catch (DockerConnectionException e) {
             return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,9 +1,15 @@
 package com.upconsulting.gilesecosystem.hank.model.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
+import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.impl.WorkflowStatus;
 
 @Entity
@@ -18,6 +24,9 @@ public class ImageFile implements IImageFile {
     private String uploadId;
     private String processingFolder;
     private long size;
+    
+    @OneToMany(fetch=FetchType.EAGER, targetEntity=OCRRun.class)
+    private List<IOCRRun> ocrRuns;
     
     public ImageFile() {}
     
@@ -152,5 +161,19 @@ public class ImageFile implements IImageFile {
     public void setSize(long size) {
         this.size = size;
     }
+    
+    @Override
+    public List<IOCRRun> getOcrRuns() {
+        if (ocrRuns == null) {
+            ocrRuns = new ArrayList<IOCRRun>();
+        }
+        return ocrRuns;
+    }
+
+    @Override
+    public void setOcrRuns(List<IOCRRun> ocrRuns) {
+        this.ocrRuns = ocrRuns;
+    }
+
     
 }

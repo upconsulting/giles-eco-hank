@@ -1,8 +1,11 @@
 package com.upconsulting.gilesecosystem.hank.web.forms;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.upconsulting.gilesecosystem.hank.model.IImageFile;
+import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 
 public class ImageFileForm extends ImageFile {
@@ -10,6 +13,8 @@ public class ImageFileForm extends ImageFile {
     private String[] processingFiles;
     private Map<String, String[]> lineFolders = new HashMap<String, String[]>();
     private byte[] content;
+    private IImageFile imageFile;
+    private List<IOCRRun> runs;
 
     public String[] getProcessingFiles() {
         return processingFiles;
@@ -35,6 +40,20 @@ public class ImageFileForm extends ImageFile {
         this.content = content;
     }
 
-    
-    
+    public IImageFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(IImageFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public List<IOCRRun> getRuns() {
+        return runs;
+    }
+
+    public void setRuns(List<IOCRRun> runs) {
+        this.runs = runs;
+    }
+
 }

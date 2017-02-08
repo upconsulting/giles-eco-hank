@@ -1,5 +1,7 @@
 package com.upconsulting.gilesecosystem.hank.model;
 
+import java.util.List;
+
 import com.upconsulting.gilesecosystem.hank.service.impl.WorkflowStatus;
 
 import edu.asu.diging.gilesecosystem.util.store.IStorableObject;
@@ -37,5 +39,9 @@ public interface IImageFile extends IStorableObject {
     public abstract long getSize();
 
     public abstract void setSize(long size);
+
+    public abstract void setOcrRuns(List<IOCRRun> ocrRuns);
+
+    public abstract List<IOCRRun> getOcrRuns();
 
 }
