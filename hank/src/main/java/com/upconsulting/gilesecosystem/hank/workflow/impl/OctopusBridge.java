@@ -36,7 +36,7 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     public boolean runNlbin(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-nlbin /data/%s -o /data/%s",
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-nlbin /data/%s -o /data/%s",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), run.getId());
         
         boolean success = runCommand(cmd);
@@ -50,7 +50,7 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     public boolean runPageLayoutAnalysis(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-gpageseg '/data/%s/????.bin.png'",
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-gpageseg '/data/%s/????.bin.png'",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, run.getId());
         
         return runCommand(cmd);
@@ -60,7 +60,7 @@ public class OctopusBridge implements IOctopusBridge {
     public boolean runLineRecognition(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String modelPath = run.getModel().getRelativePath();
         String userFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), null, null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), run.getId());
         
         return runCommand(cmd);
@@ -71,7 +71,7 @@ public class OctopusBridge implements IOctopusBridge {
         String runFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), run.getId()) + File.separator;
         String hocrFileending = ".html";
         
-        String cmd = String.format("%s run -v %s:/data ocropus ./ocropus-hocr '????/??????.bin.png' -o %s%s",
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-hocr '????/??????.bin.png' -o %s%s",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), runFolder, outputFilename, hocrFileending);
         
         boolean success = runCommand(cmd);

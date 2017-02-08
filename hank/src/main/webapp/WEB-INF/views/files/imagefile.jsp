@@ -9,6 +9,26 @@
 
 <div class="col-md-6">
 
+<c:url value="/files/image/${image.id}/ocr/run" var="actionUrl" />
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form action="${actionUrl}" class="form-inline" method="POST">
+      <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+      <input type="hidden" name="imageId" value="${image.id}">
+	  <div class="form-group">
+	    <label for="runOcr">Run OCR again with model: </label>
+	    <select class="form-control input-sm" id="selectedModel" name="modelId">
+	    <c:forEach items="${models}" var="ocrmodel">
+            <option value="${ocrmodel.id}">${ocrmodel.filename}</option>
+        </c:forEach>
+        </select>
+	  </div>
+	  <button type="submit" class="btn btn-primary btn-sm">Run OCR</button>
+	</form>
+  </div>
+</div>
+
 <c:forEach items="${image.imageFile.ocrRuns}" var="run">
 <div class="panel panel-default">
   <div class="panel-heading">

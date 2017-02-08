@@ -6,7 +6,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
+import com.upconsulting.gilesecosystem.hank.service.IModelManager;
 import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
 import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
@@ -33,6 +33,9 @@ public class ImageFileController {
     
     @Autowired
     private IFileStorageManager storageManager;
+    
+    @Autowired
+    private IModelManager modelManager;
 
 
     @RequestMapping(value = "/files/image/{id}")
@@ -81,6 +84,7 @@ public class ImageFileController {
         }
         
         model.addAttribute("image", p);
+        model.addAttribute("models", modelManager.getModels(principal.getName(), 0, 40));
         return "files/image";
     }
     
