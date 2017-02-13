@@ -61,4 +61,9 @@ public class ImageFileManager implements IImageFileManager {
         }
         return null;
     }
+    
+    @Override
+    public IImageFile getByRunId(String runId) {
+        return dbClient.getImageForRunId(runId);
+    }
 }

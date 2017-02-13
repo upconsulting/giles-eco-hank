@@ -47,6 +47,7 @@
     </ul>
     
     <b>OCR Result: </b><a href="<c:url value="/files/image/${image.id}/${run.id}/text" />">${run.hocrFile}</a>
+    <br><a href="<c:url value="/files/image/${image.id}/${run.id}/pages" />">See Pages</a>
   </div>
 </div>
 </c:forEach>
