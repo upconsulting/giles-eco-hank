@@ -5,14 +5,11 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import jj2000.j2k.codestream.HeaderInfo.SOT;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,28 +111,7 @@ public class OCRRunManager implements IOCRRunManager {
             page.setPage(new Integer(folder.getName()));
             File[] lineFiles = folder.listFiles();
             if (lineFiles != null) {
-                for (File line : lineFiles) {
-                    int idx = line.getName().indexOf(".");
-                    String lineName = line.getName().substring(0, idx);
-                    if (lines.get(lineName) == null) {
-                        lines.put(lineName, new PageLine());
-                        lines.get(lineName).setLineName(lineName);
-                    }
-                    
-                    
-                    if (line.getName().endsWith(".txt")) {
-                        byte[] fileContent;
-                        try {
-                            fileContent = fileStorageManager.getFileContentFromUrl(line.toURI().toURL());
-                        } catch (IOException e) {
-                            logger.error("Could not read file.", e);
-                            continue;
-                        }
-                        lines.get(lineName).setText(new String(fileContent));
-                    } else if (line.getName().endsWith(".bin.png")) {
-                        lines.get(lineName).setImageFilename(line.getName());
-                    }
-                }
+                createLines(lines, lineFiles);
             }
             
             List<IPageLine> pageLines = new ArrayList<IPageLine>(lines.values());
@@ -158,5 +134,30 @@ public class OCRRunManager implements IOCRRunManager {
         }
         
         return pages;
+    }
+
+    private void createLines(Map<String, IPageLine> lines, File[] lineFiles) {
+        for (File line : lineFiles) {
+            int idx = line.getName().indexOf(".");
+            String lineName = line.getName().substring(0, idx);
+            if (lines.get(lineName) == null) {
+                lines.put(lineName, new PageLine());
+                lines.get(lineName).setLineName(lineName);
+            }
+            
+            
+            if (line.getName().endsWith(".txt")) {
+                byte[] fileContent;
+                try {
+                    fileContent = fileStorageManager.getFileContentFromUrl(line.toURI().toURL());
+                } catch (IOException e) {
+                    logger.error("Could not read file.", e);
+                    continue;
+                }
+                lines.get(lineName).setText(new String(fileContent));
+            } else if (line.getName().endsWith(".bin.png")) {
+                lines.get(lineName).setImageFilename(line.getName());
+            }
+        }
     }
 }
