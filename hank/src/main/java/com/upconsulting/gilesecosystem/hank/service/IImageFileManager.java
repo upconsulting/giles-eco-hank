@@ -12,4 +12,6 @@ public interface IImageFileManager {
 
     public abstract IImageFile storeOrUpdateImageFile(IImageFile file);
 
+    public abstract IImageFile getByRunId(String runId);
+
 }

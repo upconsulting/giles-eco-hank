@@ -59,6 +59,15 @@ public class ImageFileDBClient extends DatabaseClient<IImageFile> implements IIm
     public IImageFile getFileById(String id) {
         return em.find(ImageFile.class, id);
     }
+    
+    @Override
+    public IImageFile getImageForRunId(String runId) {
+       Object result = em.createQuery("SELECT i FROM ImageFile i JOIN i.ocrRuns r WHERE r.id = :id").setParameter("id", runId).getSingleResult();
+       if (result == null) {
+           return null;
+       }
+       return (IImageFile) result;
+    }
 
     @Override
     protected String getIdPrefix() {

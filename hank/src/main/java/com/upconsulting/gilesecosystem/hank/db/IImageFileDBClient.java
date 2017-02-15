@@ -17,4 +17,6 @@ public interface IImageFileDBClient extends IDatabaseClient<IImageFile> {
 
     public abstract IImageFile getFileById(String id);
 
+    public abstract IImageFile getImageForRunId(String runId);
+
 }
