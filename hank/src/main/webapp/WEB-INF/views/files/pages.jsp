@@ -8,7 +8,7 @@
   <a href="<c:url value="/files/image/${imageId}/${runId}/page/${page.page}/lines" />">
     <li class="list-group-item">
     <span class="badge">${fn:length(page.lines)} Lines</span>
-    Page ${page.page}
+    <i class="fa fa-file-text-o" aria-hidden="true"></i> Page ${page.page}
   </li>
 </a>
 </c:forEach>
