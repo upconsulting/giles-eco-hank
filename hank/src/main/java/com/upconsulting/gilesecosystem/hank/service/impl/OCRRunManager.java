@@ -28,6 +28,7 @@ import com.upconsulting.gilesecosystem.hank.model.impl.PageLine;
 import com.upconsulting.gilesecosystem.hank.model.impl.RunStep;
 import com.upconsulting.gilesecosystem.hank.model.impl.StepType;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
+import com.upconsulting.gilesecosystem.hank.service.ILineCorrectionManager;
 import com.upconsulting.gilesecosystem.hank.service.IOCRRunManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
@@ -40,6 +41,9 @@ public class OCRRunManager implements IOCRRunManager {
     
     @Autowired
     private IOCRRunDBClient runDBClient;
+    
+    @Autowired
+    private ILineCorrectionManager correctionsManager;
     
     @Autowired
     private IImageFileManager imageManager;
@@ -130,6 +134,9 @@ public class OCRRunManager implements IOCRRunManager {
             });
             
             page.setLines(pageLines);
+            
+            // set corrections
+            page.setCorrections(correctionsManager.getCorrections(file.getUsername(), file.getId(), runId, folder.getName()));
             pages.add(page);
         }
         

@@ -3,8 +3,10 @@ package com.upconsulting.gilesecosystem.hank.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +55,14 @@ public class LineCorrectionManager implements ILineCorrectionManager {
         correction.setDate(LocalDateTime.now());
         correction.setId(dbClient.generateId());
         
+        String runFolder = storageManager.getAndCreateStoragePath(username, imageId, run.getId());
         File pageFolder = storageManager.createFolder(username, imageId, correction.getId(), page);
         for (LineCorrection line : corrections) {
             storageManager.saveFileInFolder(pageFolder, line.getLineName() + ".txt", line.getText().getBytes());
+            // copy image file
+            String filename = line.getLineName() + ".bin.png";
+            File imageFile = new File(runFolder + File.separator + page + File.separator + filename);
+            FileUtils.copyFile(imageFile, new File(pageFolder + File.separator + filename));
         }
         
         try {
@@ -66,5 +73,21 @@ public class LineCorrectionManager implements ILineCorrectionManager {
             return null;
         }
         return correction;
+    }
+    
+    @Override
+    public List<ICorrection> getCorrections(String username, String imageId, String runId, String page) {
+        List<Correction> corrections = dbClient.getCorrectionsByImage(runId);
+        
+        List<ICorrection> foundCorrections = new ArrayList<ICorrection>();
+        for (Correction cor : corrections) {
+            String corrFolder = storageManager.getAndCreateStoragePath(username, imageId, cor.getId());
+            File pageFolder = new File (corrFolder + File.separator + page);
+            if (pageFolder.exists()) {
+                foundCorrections.add(cor);
+            }
+        }
+        
+        return foundCorrections;
     }
 }
