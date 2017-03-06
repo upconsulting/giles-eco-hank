@@ -2,6 +2,7 @@ package com.upconsulting.gilesecosystem.hank.model.impl;
 
 import java.util.List;
 
+import com.upconsulting.gilesecosystem.hank.model.ICorrection;
 import com.upconsulting.gilesecosystem.hank.model.IPage;
 import com.upconsulting.gilesecosystem.hank.model.IPageLine;
 
@@ -9,6 +10,7 @@ public class Page implements IPage {
 
     private int page;
     private List<IPageLine> lines;
+    private ICorrection correction;
     
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.model.impl.IPage#getPage()
@@ -37,6 +39,14 @@ public class Page implements IPage {
     @Override
     public void setLines(List<IPageLine> lines) {
         this.lines = lines;
+    }
+    @Override
+    public ICorrection getCorrection() {
+        return correction;
+    }
+    @Override
+    public void setCorrection(ICorrection correction) {
+        this.correction = correction;
     }
     
 }

@@ -7,13 +7,11 @@
    All Pages</a></li>
 </ol>
 
-<c:if test="${empty page.correction}">
 <div class="text-right">
 <p>
 <a href="<c:url value="/files/image/${imageId}/${runId}/page/${page.page}/lines/edit" />" class="btn btn-primary btn-sm">Correct Extracted Text</a>
 </p>
 </div>
-</c:if>
 
 <c:forEach items="${page.lines}" var="line">
 <div class="panel panel-default">

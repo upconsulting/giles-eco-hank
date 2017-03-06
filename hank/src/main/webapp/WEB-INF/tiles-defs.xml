@@ -38,8 +38,16 @@
         <put-attribute name="content" value="/WEB-INF/views/files/page.jsp" />    
     </definition>
     
+    <definition name="files/image/page/corrected" extends="base.definition">
+        <put-attribute name="content" value="/WEB-INF/views/files/correctedPage.jsp" />    
+    </definition>
+    
     <definition name="files/image/page/edit" extends="base.definition">
         <put-attribute name="content" value="/WEB-INF/views/files/editPage.jsp" />    
+    </definition>
+    
+    <definition name="files/image/page/corrected/edit" extends="base.definition">
+        <put-attribute name="content" value="/WEB-INF/views/files/editCorrectedPage.jsp" />    
     </definition>
     
     <!--  models  -->
