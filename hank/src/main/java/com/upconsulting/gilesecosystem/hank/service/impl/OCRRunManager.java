@@ -85,15 +85,22 @@ public class OCRRunManager implements IOCRRunManager {
     }
     
     @Override
-    public List<IPage> getPages(String runId) throws ImageFileDoesNotExistException {
+    public List<IPage> getPages(String runId, String correctionId) throws ImageFileDoesNotExistException {
         IOCRRun run = runDBClient.getById(runId);
         IImageFile file = imageManager.getByRunId(runId);
         if (file == null) {
             throw new ImageFileDoesNotExistException();
         }
+        
         String runFolderPath = fileStorageManager.getAndCreateStoragePath(file.getUsername(), file.getId(), run.getId());
-        File runFolder = new File(runFolderPath);
-        File[] pageFolders = runFolder.listFiles(new FileFilter() {
+        File fileFolder = new File(runFolderPath);
+        
+        
+        if (correctionId != null) {
+            fileFolder = new File(runFolderPath + File.separator + correctionId);
+        }
+        
+        File[] pageFolders = fileFolder.listFiles(new FileFilter() {
             
             @Override
             public boolean accept(File pathname) {
@@ -110,37 +117,41 @@ public class OCRRunManager implements IOCRRunManager {
         
         List<IPage> pages = new ArrayList<>();
         for (File folder : pageFolders) {
-            Map<String, IPageLine> lines = new HashMap<>();
-            IPage page = new Page();
-            page.setPage(new Integer(folder.getName()));
-            File[] lineFiles = folder.listFiles();
-            if (lineFiles != null) {
-                createLines(lines, lineFiles);
-            }
-            
-            List<IPageLine> pageLines = new ArrayList<IPageLine>(lines.values());
-            pageLines.sort(new Comparator<IPageLine>() {
-
-                @Override
-                public int compare(IPageLine o1, IPageLine o2) {
-                    if (o1.getLineName() == null) {
-                        return -1;
-                    }
-                    if (o2.getLineName() == null) {
-                        return 1;
-                    }
-                    return Integer.parseInt(o1.getLineName(), 16) - Integer.parseInt(o2.getLineName(), 16);
-                }
-            });
-            
-            page.setLines(pageLines);
-            
-            // set corrections
-            page.setCorrections(correctionsManager.getCorrections(file.getUsername(), file.getId(), runId, folder.getName()));
-            pages.add(page);
+            pages.add(createPage(runId, file, folder));
         }
         
         return pages;
+    }
+
+    private IPage createPage(String runId, IImageFile file, File folder) {
+        Map<String, IPageLine> lines = new HashMap<>();
+        IPage page = new Page();
+        page.setPage(new Integer(folder.getName()));
+        File[] lineFiles = folder.listFiles();
+        if (lineFiles != null) {
+            createLines(lines, lineFiles);
+        }
+        
+        List<IPageLine> pageLines = new ArrayList<IPageLine>(lines.values());
+        pageLines.sort(new Comparator<IPageLine>() {
+
+            @Override
+            public int compare(IPageLine o1, IPageLine o2) {
+                if (o1.getLineName() == null) {
+                    return -1;
+                }
+                if (o2.getLineName() == null) {
+                    return 1;
+                }
+                return Integer.parseInt(o1.getLineName(), 16) - Integer.parseInt(o2.getLineName(), 16);
+            }
+        });
+        
+        page.setLines(pageLines);
+        
+        // set corrections
+        page.setCorrection(correctionsManager.getCorrections(file.getUsername(), file.getId(), runId, folder.getName()));
+        return page;
     }
 
     private void createLines(Map<String, IPageLine> lines, File[] lineFiles) {

@@ -10,7 +10,7 @@ public class Page implements IPage {
 
     private int page;
     private List<IPageLine> lines;
-    private List<ICorrection> corrections;
+    private ICorrection correction;
     
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.model.impl.IPage#getPage()
@@ -41,12 +41,12 @@ public class Page implements IPage {
         this.lines = lines;
     }
     @Override
-    public List<ICorrection> getCorrections() {
-        return corrections;
+    public ICorrection getCorrection() {
+        return correction;
     }
     @Override
-    public void setCorrections(List<ICorrection> corrections) {
-        this.corrections = corrections;
+    public void setCorrection(ICorrection correction) {
+        this.correction = correction;
     }
     
 }

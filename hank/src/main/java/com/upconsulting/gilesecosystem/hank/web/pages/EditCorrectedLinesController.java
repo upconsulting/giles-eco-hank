@@ -24,35 +24,36 @@ import com.upconsulting.gilesecosystem.hank.web.forms.TextEditForm;
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
 
 @Controller
-public class EditLinesController {
+public class EditCorrectedLinesController {
 
     @Autowired
     private IOCRRunManager runManager;
-    
+
     @Autowired
     private ILineCorrectionManager correctionManager;
     
-    @RequestMapping(value = "/files/image/{fileId}/{runId}/page/{pagenr}/lines/edit")
-    public String showLines(Model model, @PathVariable String fileId, @PathVariable String runId, @PathVariable String pagenr) throws ImageFileDoesNotExistException {
-        List<IPage> pages = runManager.getPages(runId, null);
+    @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/{correctionId:COR[0-9a-zA-Z]+}/page/{pagenr}/lines/edit")
+    public String showLinesForEdit(Model model, @PathVariable String fileId, @PathVariable String runId, @PathVariable String correctionId, @PathVariable String pagenr) throws ImageFileDoesNotExistException {
+        List<IPage> pages = runManager.getPages(runId, correctionId);
         IPage page = pages.stream().filter(p -> p.getPage() ==  new Integer(pagenr)).findFirst().get();
         
         model.addAttribute("imageId", fileId);
         model.addAttribute("page", page);
+        model.addAttribute("correctionId", correctionId);
         
         TextEditForm form = new TextEditForm();
         form.setLineCorrections(new ArrayList<LineCorrection>());
         page.getLines().forEach(l -> form.getLineCorrections().add(new LineCorrection(l.getLineName(), l.getText(), l.getImageFilename())));
         
         model.addAttribute(form);
-        return "files/image/page/edit";
+        return "files/image/page/corrected/edit";
     }
     
-    @RequestMapping(value = "/files/image/{fileId}/{runId}/page/{pagenr}/lines/edit", method = RequestMethod.POST)
-    public String saveCorrectedLines(@ModelAttribute TextEditForm form, @PathVariable String fileId, @PathVariable String runId, @PathVariable String pagenr, Principal principal) throws NumberFormatException, RunDoesNotExistException, FileStorageException, IOException {
+    @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/{correctionId:COR[0-9a-zA-Z]+}/page/{pagenr}/lines/edit", method = RequestMethod.POST)
+    public String saveCorrectedLines(@ModelAttribute TextEditForm form, @PathVariable String fileId, @PathVariable String runId, @PathVariable String correctionId, @PathVariable String pagenr, Principal principal) throws NumberFormatException, RunDoesNotExistException, FileStorageException, IOException {
         
-        correctionManager.saveCorrectedLines(principal.getName(), fileId, runId, null, String.format ("%04d", new Integer(pagenr)), form.getLineCorrections());
-        return "redirect:/files/image/" + fileId + "/" + runId + "/pages";
+        correctionManager.saveCorrectedLines(principal.getName(), fileId, runId, correctionId, String.format ("%04d", new Integer(pagenr)), form.getLineCorrections());
+        return "redirect:/files/image/" + fileId + "/" + runId + "/" + correctionId + "/page/" + pagenr + "/lines";
     }
-    
 }
+

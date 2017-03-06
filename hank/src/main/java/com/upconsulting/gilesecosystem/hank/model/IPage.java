@@ -12,8 +12,8 @@ public interface IPage {
 
     public abstract void setLines(List<IPageLine> lines);
 
-    public abstract void setCorrections(List<ICorrection> corrections);
+    public abstract void setCorrection(ICorrection correction);
 
-    public abstract List<ICorrection> getCorrections();
+    public abstract ICorrection getCorrection();
 
 }

@@ -6,18 +6,16 @@
 
 <ul class="list-group">
 <c:forEach items="${pages}" var="page">
-  
-    <li class="list-group-item">
+  <li class="list-group-item">
     <span class="badge">${fn:length(page.lines)} Lines</span>
-    <a href="<c:url value="/files/image/${imageId}/${runId}/page/${page.page}/lines" />">
+    <span class="label label-primary">OCR Result</span> <a href="<c:url value="/files/image/${imageId}/${runId}/page/${page.page}/lines" />">
         <i class="fa fa-file-text-o" aria-hidden="true"></i> Page ${page.page}
     </a>
-    <ul>
-    <c:forEach items="${page.corrections}" var="cor">
-    <li>Corrected on: ${cor.date}</li>
-    </c:forEach>
-    </ul>
+    <div>
+        <span class="label label-warning">Correction</span>  <a href="<c:url value="/files/image/${imageId}/${runId}/${page.correction.id}/page/${page.page}/lines" />">
+            Corrected on: ${page.correction.date}
+        </a> 
+    </div>
   </li>
-</a>
 </c:forEach>
 </ul>

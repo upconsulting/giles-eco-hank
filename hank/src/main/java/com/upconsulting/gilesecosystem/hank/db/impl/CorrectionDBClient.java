@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.upconsulting.gilesecosystem.hank.db.ICorrectionDBClient;
 import com.upconsulting.gilesecosystem.hank.model.ICorrection;
 import com.upconsulting.gilesecosystem.hank.model.impl.Correction;
-import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 
 import edu.asu.diging.gilesecosystem.util.store.objectdb.DatabaseClient;
 
@@ -31,7 +30,7 @@ public class CorrectionDBClient extends DatabaseClient<ICorrection> implements I
     }
 
     @Override
-    protected ICorrection getById(String id) {
+    public ICorrection getById(String id) {
         return em.find(Correction.class, id);
     }
 

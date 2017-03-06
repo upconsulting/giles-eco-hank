@@ -1,19 +1,17 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
-<h2>Page ${page.page}</h2>
+<h2><span class="label label-warning">Correction</span> Page ${page.page}</h2>
 
 <ol class="breadcrumb">
   <li><a href="<c:url value="/files/image/${imageId}/${runId}/pages" />"><i class="fa fa-angle-double-left" aria-hidden="true"></i>
    All Pages</a></li>
 </ol>
 
-<c:if test="${empty page.correction}">
 <div class="text-right">
 <p>
-<a href="<c:url value="/files/image/${imageId}/${runId}/page/${page.page}/lines/edit" />" class="btn btn-primary btn-sm">Correct Extracted Text</a>
+<a href="<c:url value="/files/image/${imageId}/${runId}/${correctionId}/page/${page.page}/lines/edit" />" class="btn btn-primary btn-sm">Edit</a>
 </p>
 </div>
-</c:if>
 
 <c:forEach items="${page.lines}" var="line">
 <div class="panel panel-default">

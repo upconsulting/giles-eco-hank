@@ -45,18 +45,28 @@ public class LineCorrectionManager implements ILineCorrectionManager {
      * @see com.upconsulting.gilesecosystem.hank.service.impl.ILineCorrectionManager#saveCorrectedLines(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.List)
      */
     @Override
-    public ICorrection saveCorrectedLines(String username, String imageId, String ocrRun, String page, List<LineCorrection> corrections) throws RunDoesNotExistException, FileStorageException, IOException {
-        ICorrection correction = new Correction();
+    public ICorrection saveCorrectedLines(String username, String imageId, String ocrRun, String correctionId, String page, List<LineCorrection> corrections) throws RunDoesNotExistException, FileStorageException, IOException {
         IOCRRun run = runManager.getRun(ocrRun);
         if (run == null) {
             throw new RunDoesNotExistException("No run with id " + ocrRun);
         }
-        correction.setCorrectedRun(run);
-        correction.setDate(LocalDateTime.now());
-        correction.setId(dbClient.generateId());
         
+        ICorrection correction;
+        if (correctionId != null) {
+            correction = dbClient.getById(correctionId);
+        } else {
+            correction = new Correction();
+            correction.setCorrectedRun(run);
+            correction.setId(dbClient.generateId());
+        }
+        correction.setDate(LocalDateTime.now());
+            
         String runFolder = storageManager.getAndCreateStoragePath(username, imageId, run.getId());
-        File pageFolder = storageManager.createFolder(username, imageId, correction.getId(), page);
+        File correctionFolder = storageManager.createFolder(username, imageId, run.getId(), correction.getId());
+        File pageFolder = new File(correctionFolder.getAbsolutePath() + File.separator + page);
+        if (!pageFolder.exists()) {
+            pageFolder.mkdir();
+        }
         for (LineCorrection line : corrections) {
             storageManager.saveFileInFolder(pageFolder, line.getLineName() + ".txt", line.getText().getBytes());
             // copy image file
@@ -76,18 +86,20 @@ public class LineCorrectionManager implements ILineCorrectionManager {
     }
     
     @Override
-    public List<ICorrection> getCorrections(String username, String imageId, String runId, String page) {
+    public ICorrection getCorrections(String username, String imageId, String runId, String page) {
         List<Correction> corrections = dbClient.getCorrectionsByImage(runId);
         
-        List<ICorrection> foundCorrections = new ArrayList<ICorrection>();
-        for (Correction cor : corrections) {
-            String corrFolder = storageManager.getAndCreateStoragePath(username, imageId, cor.getId());
+        // we assume there is just one correction per page
+        if (corrections.size() > 0) {
+            ICorrection cor = corrections.get(0);
+            String runFolder = storageManager.getAndCreateStoragePath(username, imageId, runId);
+            File corrFolder = new File(runFolder + File.separator + cor.getId());
             File pageFolder = new File (corrFolder + File.separator + page);
             if (pageFolder.exists()) {
-                foundCorrections.add(cor);
+                return cor;
             }
         }
         
-        return foundCorrections;
+        return null;
     }
 }
