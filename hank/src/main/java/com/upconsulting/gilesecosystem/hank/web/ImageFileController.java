@@ -21,6 +21,7 @@ import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
+import com.upconsulting.gilesecosystem.hank.service.impl.ImageFileManager;
 import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
 import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
@@ -48,7 +49,7 @@ public class ImageFileController {
         p.setFilename(imageFile.getFilename());
         p.setProcessingFolder(imageFile.getProcessingFolder());
         
-        byte[] imageBytes = storageManager.getFileContent(principal.getName(), imageFile.getId(), null, imageFile.getFilename());
+        byte[] imageBytes = storageManager.getFileContent(principal.getName(), imageFile.getId(), ImageFileManager.IMAGE_FOLDER, imageFile.getFilename());
         p.setContent(imageBytes);
         
         String imageFolder = storageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null);
@@ -91,7 +92,7 @@ public class ImageFileController {
     @RequestMapping(value = "/files/image/{id}/content")
     public ResponseEntity<String> getImageContent(HttpServletResponse response, @PathVariable String id, Principal principal) {
         IImageFile file = imageManager.getImageFile(id);
-        byte[] content = storageManager.getFileContent(principal.getName(), file.getId(), null, file.getFilename());
+        byte[] content = storageManager.getFileContent(principal.getName(), file.getId(), ImageFileManager.IMAGE_FOLDER, file.getFilename());
         
         response.setContentType(file.getContentType());
         //response.setContentLength(content.length);
