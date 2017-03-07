@@ -3,7 +3,6 @@ package com.upconsulting.gilesecosystem.hank.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -31,6 +30,8 @@ import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 public class LineCorrectionManager implements ILineCorrectionManager {
     
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    
+    public final static String CORRECTION_FOLDER = "correction";
 
     @Autowired
     private ICorrectionDBClient dbClient;
@@ -62,7 +63,7 @@ public class LineCorrectionManager implements ILineCorrectionManager {
         correction.setDate(LocalDateTime.now());
             
         String runFolder = storageManager.getAndCreateStoragePath(username, imageId, run.getId());
-        File correctionFolder = storageManager.createFolder(username, imageId, run.getId(), correction.getId());
+        File correctionFolder = getCorrectionsFolder(username, imageId, run.getId());
         File pageFolder = new File(correctionFolder.getAbsolutePath() + File.separator + page);
         if (!pageFolder.exists()) {
             pageFolder.mkdir();
@@ -92,8 +93,7 @@ public class LineCorrectionManager implements ILineCorrectionManager {
         // we assume there is just one correction per page
         if (corrections.size() > 0) {
             ICorrection cor = corrections.get(0);
-            String runFolder = storageManager.getAndCreateStoragePath(username, imageId, runId);
-            File corrFolder = new File(runFolder + File.separator + cor.getId());
+            File corrFolder = getCorrectionsFolder(username, imageId, runId);
             File pageFolder = new File (corrFolder + File.separator + page);
             if (pageFolder.exists()) {
                 return cor;
@@ -101,5 +101,11 @@ public class LineCorrectionManager implements ILineCorrectionManager {
         }
         
         return null;
+    }
+    
+    @Override
+    public File getCorrectionsFolder(String username, String imageId, String runId) {
+        String runFolder = storageManager.getAndCreateStoragePath(username, imageId, runId);
+        return new File(runFolder + File.separator + CORRECTION_FOLDER);
     }
 }

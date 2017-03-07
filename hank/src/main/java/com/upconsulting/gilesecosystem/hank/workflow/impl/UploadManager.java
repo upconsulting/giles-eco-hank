@@ -96,6 +96,12 @@ public class UploadManager implements IUploadManager {
         return imageFiles;
     }
 
+    /**
+     * Taken from: https://www.mkyong.com/java/how-to-decompress-files-from-a-zip-file/
+     * @param zipFileBytes
+     * @param destDir
+     * @throws IOException
+     */
     private void unzip(byte[] zipFileBytes, String destDir) throws IOException {
          InputStream fis;
         // buffer for read and write data to file
@@ -104,8 +110,14 @@ public class UploadManager implements IUploadManager {
         ZipInputStream zis = new ZipInputStream(fis);
         ZipEntry ze = zis.getNextEntry();
         while (ze != null) {
+            // let's ignore folders
+            if (ze.isDirectory()) {
+                ze = zis.getNextEntry();
+                continue;
+            }
             String fileName = ze.getName();
-            File newFile = new File(destDir + File.separator + fileName);
+            
+            File newFile = new File(destDir + File.separator + fileName.substring(fileName.lastIndexOf(File.separator)));
 
             // create directories for sub directories in zip
             new File(newFile.getParent()).mkdirs();
