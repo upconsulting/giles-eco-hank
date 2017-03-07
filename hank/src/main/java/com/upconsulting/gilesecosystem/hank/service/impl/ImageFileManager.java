@@ -20,6 +20,8 @@ import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
 @Service
 public class ImageFileManager implements IImageFileManager {
     
+    public final static String IMAGE_FOLDER = "images";
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -66,4 +68,5 @@ public class ImageFileManager implements IImageFileManager {
     public IImageFile getByRunId(String runId) {
         return dbClient.getImageForRunId(runId);
     }
+
 }

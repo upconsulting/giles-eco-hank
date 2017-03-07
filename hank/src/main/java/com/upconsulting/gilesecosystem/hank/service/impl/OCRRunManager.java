@@ -97,7 +97,7 @@ public class OCRRunManager implements IOCRRunManager {
         
         
         if (correctionId != null) {
-            fileFolder = new File(runFolderPath + File.separator + correctionId);
+            fileFolder = correctionsManager.getCorrectionsFolder(file.getUsername(), file.getId(), run.getId());
         }
         
         File[] pageFolders = fileFolder.listFiles(new FileFilter() {

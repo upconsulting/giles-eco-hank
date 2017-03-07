@@ -1,5 +1,6 @@
 package com.upconsulting.gilesecosystem.hank.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface ILineCorrectionManager {
 
     ICorrection getCorrections(String username, String imageId, String runId,
             String page);
+
+    public abstract File getCorrectionsFolder(String username, String imageId, String runId);
 
 }

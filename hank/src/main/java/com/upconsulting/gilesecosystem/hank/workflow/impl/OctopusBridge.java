@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
+import com.upconsulting.gilesecosystem.hank.service.impl.ImageFileManager;
 import com.upconsulting.gilesecosystem.hank.util.Properties;
 import com.upconsulting.gilesecosystem.hank.workflow.IOctopusBridge;
 
@@ -36,8 +37,8 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     public boolean runNlbin(IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-nlbin /data/%s -o /data/%s",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, imageFile.getFilename(), run.getId());
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-nlbin /data/%s/* -o /data/%s",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, ImageFileManager.IMAGE_FOLDER, run.getId());
         
         boolean success = runCommand(cmd);
 

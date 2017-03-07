@@ -8,6 +8,10 @@
 
 <h2>Select files to upload</h2>
 
+<div class="alert alert-warning" role="alert">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> You can upload all types of image files that Ocropus/Ocropy can process. You can also upload zip files. Note though that uploaded zip files must not contain folders (except an optional root folder).
+</div>
+
 <div class="alert alert-info" role="alert">
     <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> The
     upload limit for files is 50MB.
