@@ -1,8 +1,10 @@
 package com.upconsulting.gilesecosystem.hank.service;
 
+import java.io.File;
 import java.util.List;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.ImageFileDoesNotExistException;
+import com.upconsulting.gilesecosystem.hank.exceptions.ZipFileGenerationException;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.IPage;
 import com.upconsulting.gilesecosystem.hank.model.IRunStep;
@@ -27,5 +29,18 @@ public interface IOCRRunManager {
      * @throws ImageFileDoesNotExistException
      */
     public abstract List<IPage> getPages(String runId, String correctionId) throws ImageFileDoesNotExistException;
+
+    /**
+     * Method to zip the run folder for a specific run. This method fill add all files
+     * in the run folder to the final zip files (including lines for each page and
+     * corrections).
+     * 
+     * @param runId Id of the OCR run that should be zipped up.
+     * @return A {@link File} representating the final zip file.
+     * @throws ImageFileDoesNotExistException
+     * @throws ZipFileGenerationException
+     */
+    public abstract File zipOCRFolder(String runId)
+            throws ImageFileDoesNotExistException, ZipFileGenerationException;
 
 }

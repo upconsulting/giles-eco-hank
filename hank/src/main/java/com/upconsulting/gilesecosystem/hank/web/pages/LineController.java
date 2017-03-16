@@ -26,7 +26,7 @@ public class LineController {
     @Autowired
     private IFileStorageManager storageManager;
     
-    @RequestMapping(value = "/files/image/{fileId}/{runId}/line/{page}/{filename:.+}")
+    @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/line/{page}/{filename:.+}")
     public ResponseEntity<String> getLineImage(@PathVariable String fileId, @PathVariable String runId, @PathVariable String page, @PathVariable String filename, Principal principal, HttpServletResponse response) {
         
         String runFolder = storageManager.getAndCreateStoragePath(principal.getName(), fileId, runId);

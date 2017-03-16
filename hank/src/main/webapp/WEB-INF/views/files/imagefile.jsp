@@ -1,5 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
+<script>
+$(function() {
+   $.each($(".date"), function(elem) {
+       var date = new Date(elem.text());
+       elem.text(date.toLocaleDateString());
+   });
+});
+</script>
+
 <h2>${image.filename}</h2>
 
 <div class="row">
@@ -32,7 +41,7 @@
 <c:forEach items="${image.imageFile.ocrRuns}" var="run">
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">OCR run on ${run.date}</h3>
+    <h3 class="panel-title">OCR run on <span class="date">${run.date}</span> <a href="<c:url value="/files/image/${image.id}/${run.id}/download" />"><div class="pull-right"><i class="fa fa-download" aria-hidden="true"></i>  Download</a></div></h3>
   </div>
   <div class="panel-body">
     Model used: <b>${run.model.title}</b> (${run.model.filename})
@@ -46,8 +55,8 @@
     </c:forEach>
     </ul>
     
-    <b>OCR Result: </b><a href="<c:url value="/files/image/${image.id}/${run.id}/text" />">${run.hocrFile}</a>
-    <br><a href="<c:url value="/files/image/${image.id}/${run.id}/pages" />">See Pages</a>
+    <a href="<c:url value="/files/image/${image.id}/${run.id}/text" />"><i class="fa fa-font" aria-hidden="true"></i> OCR Result as HOCR</a>
+    <br><a href="<c:url value="/files/image/${image.id}/${run.id}/pages" />"><i class="fa fa-eye" aria-hidden="true"></i> Correct Pages</a>
   </div>
 </div>
 </c:forEach>
