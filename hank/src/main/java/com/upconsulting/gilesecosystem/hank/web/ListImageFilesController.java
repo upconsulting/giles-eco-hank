@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.upconsulting.gilesecosystem.hank.db.impl.ImageFileDBClient;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
@@ -25,6 +26,7 @@ public class ListImageFilesController {
     @Autowired
     private IImageFileManager imageFileManager;
     
+   
     @Autowired
     private IPropertiesCopier copier;
     
@@ -32,11 +34,13 @@ public class ListImageFilesController {
     private IFileStorageManager storageManager;
 
     @RequestMapping(value = "/files/uploads")
-    public String showUploads(Principal principal, Model model) {
-        List<IImageFile> files = imageFileManager.getImageFiles(principal.getName());
+    public String showUploads(Principal principal, Model model, @RequestParam(defaultValue = "0") int page) {
+        List<IImageFile> files = imageFileManager.getImageFiles(principal.getName(), page);
         List<ImageFileForm> pages = new ArrayList<ImageFileForm>();
         files.forEach(f -> pages.add(createPage(f)));
         model.addAttribute("files", pages);
+        model.addAttribute("currentPageValue", page);
+        model.addAttribute("totalPages", imageFileManager.getNumberOfPages(principal.getName()));
         return "files/uploads";
     }
     
@@ -45,6 +49,8 @@ public class ListImageFilesController {
         //copier.copyObject(file, p);
         p.setId(file.getId());
         p.setProcessingFolder(file.getProcessingFolder());
+        p.setFilename(file.getFilename());
+        p.setImageFile(file);
         
         String imageFolder = storageManager.getAndCreateStoragePath(file.getUsername(), file.getId(), null);
         File processFolder = new File(imageFolder + File.separator + file.getProcessingFolder());

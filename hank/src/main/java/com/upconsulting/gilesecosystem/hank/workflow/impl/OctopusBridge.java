@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
+import com.upconsulting.gilesecosystem.hank.model.ITraining;
 import com.upconsulting.gilesecosystem.hank.service.impl.ImageFileManager;
 import com.upconsulting.gilesecosystem.hank.util.Properties;
 import com.upconsulting.gilesecosystem.hank.workflow.IOctopusBridge;
@@ -78,6 +79,21 @@ public class OctopusBridge implements IOctopusBridge {
         boolean success = runCommand(cmd);
         if (success) {
             return outputFilename + hocrFileending;
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public String runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
+        String trainingsFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
+        
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -c %s/*/*.gt.txt %s/*/*.gt.txt -o model.pyrnn.gz %s/*/*.bin.png",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getTrainingFolder(), training.getTestFolder(), training.getTrainingFolder());
+        
+        boolean success = runCommand(cmd);
+        if (success) {
+            return "model.pyrnn.gz";
         }
         
         return null;

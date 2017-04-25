@@ -52,6 +52,21 @@ public class ImageFileDBClient extends DatabaseClient<IImageFile> implements IIm
         return em.createQuery(query).getResultList();
     }
     
+    @Override
+    public List<ImageFile> getImageFiles(String username, int offset, int pageSize) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<ImageFile> query = builder.createQuery(ImageFile.class);
+        Root<ImageFile> root = query.from(ImageFile.class);
+        query.select(root);
+        query.where(builder.equal( root.get("username"), username ));
+        return em.createQuery(query).setFirstResult(offset).setMaxResults(pageSize).getResultList();
+    }
+    
+    @Override
+    public int getNumberOfImageFiles(String username) {
+        return getImageFiles(username).size();
+    }
+    
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.db.impl.IImageFileDBClient#getFileById(java.lang.String)
      */

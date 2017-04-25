@@ -2,6 +2,10 @@ package com.upconsulting.gilesecosystem.hank.db;
 
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 
@@ -18,5 +22,9 @@ public interface IImageFileDBClient extends IDatabaseClient<IImageFile> {
     public abstract IImageFile getFileById(String id);
 
     public abstract IImageFile getImageForRunId(String runId);
+
+    public abstract List<ImageFile> getImageFiles(String username, int offset, int pageSize);
+
+    public abstract int getNumberOfImageFiles(String username);
 
 }

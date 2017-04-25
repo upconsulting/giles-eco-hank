@@ -57,6 +57,14 @@ $(function() {
     
     <a href="<c:url value="/files/image/${image.id}/${run.id}/text" />"><i class="fa fa-font" aria-hidden="true"></i> OCR Result as HOCR</a>
     <br><a href="<c:url value="/files/image/${image.id}/${run.id}/pages" />"><i class="fa fa-eye" aria-hidden="true"></i> Correct Pages</a>
+    <span class="pull-right">
+    <c:url value="/files/image/${image.id}/${run.id}/train" var="actionUrlTrain" />
+    
+    <form action="${actionUrlTrain}" class="form-inline" method="POST">
+    <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button class="btn btn-primary btn-link" type="submit"><i class="fa fa-cog" aria-hidden="true"></i> Train model</button>
+    </form>
+    </span>
   </div>
 </div>
 </c:forEach>

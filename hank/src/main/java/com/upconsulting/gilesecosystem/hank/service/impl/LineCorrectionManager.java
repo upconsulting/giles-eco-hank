@@ -64,6 +64,9 @@ public class LineCorrectionManager implements ILineCorrectionManager {
             
         String runFolder = storageManager.getAndCreateStoragePath(username, imageId, run.getId());
         File correctionFolder = getCorrectionsFolder(username, imageId, run.getId());
+        if (!correctionFolder.exists()) {
+            correctionFolder.mkdir();
+        }
         File pageFolder = new File(correctionFolder.getAbsolutePath() + File.separator + page);
         if (!pageFolder.exists()) {
             pageFolder.mkdir();

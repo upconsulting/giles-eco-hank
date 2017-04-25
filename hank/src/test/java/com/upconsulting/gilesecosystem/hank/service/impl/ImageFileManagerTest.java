@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import com.upconsulting.gilesecosystem.hank.db.IImageFileDBClient;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
+import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
 
 public class ImageFileManagerTest {
 
@@ -23,7 +24,7 @@ public class ImageFileManagerTest {
     private IImageFileDBClient mockedDbClient;
     
     @InjectMocks
-    private ImageFileManager managerToTest;
+    private IImageFileManager managerToTest;
     
     private String CONTENT_TYPE = "contentType";
     

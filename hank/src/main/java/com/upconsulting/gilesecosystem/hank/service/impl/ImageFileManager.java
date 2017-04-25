@@ -6,6 +6,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,13 @@ import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
 
+@PropertySource("classpath:config.properties")
 @Transactional
 @Service
 public class ImageFileManager implements IImageFileManager {
+    
+    @Value("${page_size}")
+    private int pageSize;
     
     public final static String IMAGE_FOLDER = "images";
 
@@ -45,6 +51,20 @@ public class ImageFileManager implements IImageFileManager {
         List<IImageFile> imageFiles = new ArrayList<IImageFile>();
         files.forEach(f -> imageFiles.add(f));
         return imageFiles;
+    }
+    
+    @Override
+    public List<IImageFile> getImageFiles(String username, int page) {
+        List<ImageFile> files = dbClient.getImageFiles(username, page, pageSize);
+        List<IImageFile> imageFiles = new ArrayList<IImageFile>();
+        files.forEach(f -> imageFiles.add(f));
+        return imageFiles;
+    }
+    
+    @Override
+    public int getNumberOfPages(String username) {
+        int totalNr = dbClient.getNumberOfImageFiles(username);
+        return (int) Math.ceil(new Double(totalNr)/new Double(pageSize));
     }
     
     /* (non-Javadoc)
