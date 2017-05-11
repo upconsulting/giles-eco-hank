@@ -88,8 +88,8 @@ public class OctopusBridge implements IOctopusBridge {
     public String runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException {
         String trainingsFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
         
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -c %s/*/*.gt.txt %s/*/*.gt.txt -o model.pyrnn.gz %s/*/*.bin.png",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getTrainingFolder(), training.getTestFolder(), training.getTrainingFolder());
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o model.pyrnn.gz %s/*/*.bin.png",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), training.getTrainingFolder());
         
         boolean success = runCommand(cmd);
         if (success) {

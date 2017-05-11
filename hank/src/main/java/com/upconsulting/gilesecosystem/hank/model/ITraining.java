@@ -26,4 +26,12 @@ public interface ITraining extends IStorableObject {
 
     String getTrainingFolder();
 
+    void setSavingFreq(int savingFreq);
+
+    int getSavingFreq();
+
+    void setLinesToTrain(int linesToTrain);
+
+    int getLinesToTrain();
+
 }

@@ -61,7 +61,7 @@ public class TrainingService implements ITrainingService {
      * @see com.upconsulting.gilesecosystem.hank.service.impl.ITrainingService#trainModel(java.lang.String)
      */
     @Override
-    public void trainModel(String runId) throws ImageFileDoesNotExistException, TrainingException {
+    public void trainModel(String runId, int linesToTrain, int savingFreq) throws ImageFileDoesNotExistException, TrainingException {
         
         IImageFile file = fileManager.getByRunId(runId);
         IOCRRun run = runManager.getRun(runId);
@@ -71,6 +71,8 @@ public class TrainingService implements ITrainingService {
         training.setId(trainingId);
         training.setRunId(runId);
         training.setDate(ZonedDateTime.now());
+        training.setLinesToTrain(linesToTrain);
+        training.setSavingFreq(savingFreq);
         
         File trainingFolder = storageManager.createFolder(file.getUsername(), file.getId(), trainingId, TRAIN_FOLDER);
         File testFolder = storageManager.createFolder(file.getUsername(), file.getId(), trainingId, TEST_FOLDER);

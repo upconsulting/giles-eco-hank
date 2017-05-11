@@ -60,13 +60,48 @@ $(function() {
     <span class="pull-right">
     <c:url value="/files/image/${image.id}/${run.id}/train" var="actionUrlTrain" />
     
-    <form action="${actionUrlTrain}" class="form-inline" method="POST">
-    <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    <button class="btn btn-primary btn-link" type="submit"><i class="fa fa-cog" aria-hidden="true"></i> Train model</button>
+    <a type="button" id="dialog-${run.id}" data-container="body" data-toggle="popover" data-placement="left">
+	  <i class="fa fa-cog" aria-hidden="true"></i> Train Model
+	</a>
+	<script>
+	//@ sourceURL=pop.js
+		$('#dialog-${run.id}').popover({ 
+		    html : true,
+		    title: function() {
+		      return $("#dialog-head-${run.id}").html();
+		    },
+		    content: function() {
+		      var dialog = $("#dialog-content-${run.id}");
+		      var clone = dialog.clone();
+		      clone.find("form").removeClass("hide");
+		      return clone.html();
+		    }
+		});
+	</script>
+	
+	<div id="dialog-head-${run.id}" class="hide">
+	   Train model
+	</div>
+	<div id="dialog-content-${run.id}">
+    <form action="${actionUrlTrain}" class="form-inline hide" method="POST">
+	    <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <p>
+		    <label>Lines to train: </label><input name="linesToTrain" type="number" class="form-control" value="100000" />
+	    </p>
+	    <p>
+            <label>Saving frequency: </label><input name="savingFreq" type="number" class="form-control" value="1000" />
+            
+        </p>
+	    <p class="pull-right">
+	    <button class="btn btn-primary btn-sm" type="submit"> Train</button>
+	    </p>
     </form>
+    </div>
+    
     </span>
   </div>
 </div>
 </c:forEach>
 
 </div>
+

@@ -15,6 +15,9 @@ public class Training implements ITraining {
     private String runId;
     private ZonedDateTime date;
     
+    private int linesToTrain;
+    private int savingFreq;
+    
     private String trainingFolder;
     private String testFolder;
     
@@ -59,6 +62,22 @@ public class Training implements ITraining {
     @Override
     public void setDate(ZonedDateTime date) {
         this.date = date;
+    }
+    @Override
+    public int getLinesToTrain() {
+        return linesToTrain;
+    }
+    @Override
+    public void setLinesToTrain(int linesToTrain) {
+        this.linesToTrain = linesToTrain;
+    }
+    @Override
+    public int getSavingFreq() {
+        return savingFreq;
+    }
+    @Override
+    public void setSavingFreq(int savingFreq) {
+        this.savingFreq = savingFreq;
     }
     @Override
     public String getTrainingFolder() {

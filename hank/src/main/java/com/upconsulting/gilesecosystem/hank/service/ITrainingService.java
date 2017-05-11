@@ -5,6 +5,6 @@ import com.upconsulting.gilesecosystem.hank.exceptions.TrainingException;
 
 public interface ITrainingService {
 
-    public abstract void trainModel(String runId) throws ImageFileDoesNotExistException, TrainingException ;
+    public abstract void trainModel(String runId, int linesToTrain, int savingFreq) throws ImageFileDoesNotExistException, TrainingException ;
 
 }
