@@ -34,4 +34,8 @@ public interface ITraining extends IStorableObject {
 
     int getLinesToTrain();
 
+    void setStartingModel(String startingModel);
+
+    String getStartingModel();
+
 }

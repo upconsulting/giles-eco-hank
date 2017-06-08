@@ -13,6 +13,7 @@ public class Training implements ITraining {
     @Id
     private String id;
     private String runId;
+    private String startingModel;
     private ZonedDateTime date;
     
     private int linesToTrain;
@@ -94,5 +95,13 @@ public class Training implements ITraining {
     @Override
     public void setTestFolder(String testFolder) {
         this.testFolder = testFolder;
+    }
+    @Override
+    public String getStartingModel() {
+        return startingModel;
+    }
+    @Override
+    public void setStartingModel(String startingModel) {
+        this.startingModel = startingModel;
     }
 }

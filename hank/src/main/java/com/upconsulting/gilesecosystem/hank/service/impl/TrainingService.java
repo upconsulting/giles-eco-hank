@@ -61,7 +61,7 @@ public class TrainingService implements ITrainingService {
      * @see com.upconsulting.gilesecosystem.hank.service.impl.ITrainingService#trainModel(java.lang.String)
      */
     @Override
-    public void trainModel(String runId, int linesToTrain, int savingFreq) throws ImageFileDoesNotExistException, TrainingException {
+    public void trainModel(String runId, int linesToTrain, int savingFreq, List<Integer> pageNumbers) throws ImageFileDoesNotExistException, TrainingException {
         
         IImageFile file = fileManager.getByRunId(runId);
         IOCRRun run = runManager.getRun(runId);
@@ -80,6 +80,10 @@ public class TrainingService implements ITrainingService {
         List<IPage> pages = runManager.getPages(runId, null);
         for (IPage page : pages) {
             int pagenr = page.getPage();
+            // if we don't want to train on this page, just continue
+            if (!pageNumbers.contains(pagenr)) {
+                continue;
+            }
             String formattedPageNr = String.format("%04d", pagenr);
             // create page folders
             File trainingPageFolder = new File(trainingFolder.getAbsolutePath() + File.separator + formattedPageNr);
