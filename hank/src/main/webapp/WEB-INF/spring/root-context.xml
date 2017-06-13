@@ -50,5 +50,8 @@
     <tx:annotation-driven proxy-target-class="true"
         transaction-manager="txmanager_data" />
 
+    <task:annotation-driven executor="myExecutor" />
+    <task:executor id="myExecutor" pool-size="1" />
+    
 
 </beans>

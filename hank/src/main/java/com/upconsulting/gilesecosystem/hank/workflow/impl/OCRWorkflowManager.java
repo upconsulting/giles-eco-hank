@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.impl.OCRRun;
@@ -47,7 +48,7 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
      */
     @Override
     public IOCRRun startOCR(IImageFile file, String modelId) throws FileStorageException,
-            IOException, UnstorableObjectException, DockerConnectionException {
+            IOException, UnstorableObjectException, DockerConnectionException, UnknownObjectTypeException {
 
         IOCRRun runInfo = new OCRRun();
         runInfo.setModel(modelManager.getModel(modelId));
@@ -72,7 +73,7 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
     }
 
     private IImageFile runNlb(IImageFile file, IOCRRun runInfo)
-            throws DockerConnectionException, UnstorableObjectException {
+            throws DockerConnectionException, UnstorableObjectException, UnknownObjectTypeException {
         runInfo.getSteps().add(runManager.createRunStep(StepType.BINARIZATION));
 
         boolean success = octopusBridge.runNlbin(file, runInfo);
@@ -90,7 +91,7 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
     }
 
     private IImageFile runLayoutAnalysis(IImageFile file, IOCRRun runInfo)
-            throws DockerConnectionException, UnstorableObjectException {
+            throws DockerConnectionException, UnstorableObjectException, UnknownObjectTypeException {
         runInfo.getSteps().add(runManager.createRunStep(StepType.LAYOUT_ANALYSIS));
 
         boolean success = octopusBridge.runPageLayoutAnalysis(file, runInfo);
@@ -108,7 +109,7 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
     }
 
     private IImageFile runLineRecognition(IImageFile file, IOCRRun runInfo)
-            throws DockerConnectionException, UnstorableObjectException {
+            throws DockerConnectionException, UnstorableObjectException, UnknownObjectTypeException {
         runInfo.getSteps().add(runManager.createRunStep(StepType.LINE_RECOGNITION));
 
         boolean success = octopusBridge.runLineRecognition(file, runInfo);
@@ -125,7 +126,7 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
         return imageFileManager.storeOrUpdateImageFile(file);
     }
     
-    private IImageFile runHOCROutput(IImageFile file, IOCRRun runInfo) throws DockerConnectionException {
+    private IImageFile runHOCROutput(IImageFile file, IOCRRun runInfo) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
         runInfo.getSteps().add(runManager.createRunStep(StepType.HOCR_GENERATION));
 
         String filename = octopusBridge.runHOCROutput(file, runInfo, TEXT_FILENAME);

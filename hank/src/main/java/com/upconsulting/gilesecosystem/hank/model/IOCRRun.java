@@ -2,14 +2,13 @@ package com.upconsulting.gilesecosystem.hank.model;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import com.upconsulting.gilesecosystem.hank.model.impl.StepStatus;
 import com.upconsulting.gilesecosystem.hank.model.impl.StepType;
 
 import edu.asu.diging.gilesecosystem.util.store.IStorableObject;
 
-public interface IOCRRun extends IStorableObject {
+public interface IOCRRun extends ITask, IStorableObject {
 
     public abstract String getId();
 

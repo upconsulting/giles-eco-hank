@@ -1,7 +1,13 @@
 package com.upconsulting.gilesecosystem.hank.db.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +38,20 @@ public class TrainingDBClient extends DatabaseClient<ITraining> implements ITrai
     @Override
     protected EntityManager getClient() {
         return em;
+    }
+
+    @Override
+    public List<ITraining> getTrainingsByRunId(String runId) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Training> query = builder.createQuery(Training.class);
+        Root<Training> root = query.from(Training.class);
+        query.select(root);
+        query.where(builder.equal( root.get("runId"), runId ));
+        
+        List<Training> trainings = em.createQuery(query).getResultList();
+        List<ITraining> results = new ArrayList<>();
+        trainings.forEach(t -> results.add((ITraining) t));
+        return results;
     }
 
 }

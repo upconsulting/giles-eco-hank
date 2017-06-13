@@ -2,7 +2,6 @@ package com.upconsulting.gilesecosystem.hank.workflow.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,14 +10,15 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import jj2000.j2k.entropy.decoder.ByteInputBuffer;
-
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
@@ -33,6 +33,8 @@ import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 
 @Service
 public class UploadManager implements IUploadManager {
+    
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private IOCRWorkflowManager workflowManager;
@@ -87,7 +89,13 @@ public class UploadManager implements IUploadManager {
 
             imageFiles.add(file);
 
-            IOCRRun runInfo = workflowManager.startOCR(file, modelId);
+            IOCRRun runInfo;
+            try {
+                runInfo = workflowManager.startOCR(file, modelId);
+            } catch (UnknownObjectTypeException e) {
+                logger.error("Could not store task object.", e);
+                continue;
+            }
 
             file.getOcrRuns().add(runInfo);
             imageFileManager.storeOrUpdateImageFile(file);

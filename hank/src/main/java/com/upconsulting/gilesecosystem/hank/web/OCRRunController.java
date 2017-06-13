@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
@@ -29,7 +30,7 @@ public class OCRRunController {
     
 
     @RequestMapping(value = "/files/image/{id}/ocr/run", method = RequestMethod.POST)
-    public String runOCR(@RequestParam String modelId, @PathVariable String id) throws FileStorageException, IOException, UnstorableObjectException, DockerConnectionException {
+    public String runOCR(@RequestParam String modelId, @PathVariable String id) throws FileStorageException, IOException, UnstorableObjectException, DockerConnectionException, UnknownObjectTypeException {
         if (id == null || modelId == null) {
             throw new RuntimeException("Model id null or image id null.");
         }

@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 
 import edu.asu.diging.gilesecosystem.util.store.IStorableObject;
 
-public interface ITraining extends IStorableObject {
+public interface ITraining extends ITask, IStorableObject {
 
     public abstract String getId();
 

@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +22,7 @@ import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
 import com.upconsulting.gilesecosystem.hank.service.IModelManager;
+import com.upconsulting.gilesecosystem.hank.service.ITrainingService;
 import com.upconsulting.gilesecosystem.hank.service.impl.ImageFileManager;
 import com.upconsulting.gilesecosystem.hank.web.forms.ImageFileForm;
 
@@ -37,20 +39,23 @@ public class ImageFileController {
     
     @Autowired
     private IModelManager modelManager;
+    
+    @Autowired
+    private ITrainingService trainingService;
 
 
     @RequestMapping(value = "/files/image/{id}")
     public String showImageFile(Model model, @PathVariable String id, Principal principal) {
         IImageFile imageFile = imageManager.getImageFile(id);
         
-        ImageFileForm p = new ImageFileForm();
-        p.setImageFile(imageFile);
-        p.setId(imageFile.getId());
-        p.setFilename(imageFile.getFilename());
-        p.setProcessingFolder(imageFile.getProcessingFolder());
+        ImageFileForm imageFileForm = new ImageFileForm();
+        imageFileForm.setImageFile(imageFile);
+        imageFileForm.setId(imageFile.getId());
+        imageFileForm.setFilename(imageFile.getFilename());
+        imageFileForm.setProcessingFolder(imageFile.getProcessingFolder());
         
         byte[] imageBytes = storageManager.getFileContent(principal.getName(), imageFile.getId(), ImageFileManager.IMAGE_FOLDER, imageFile.getFilename());
-        p.setContent(imageBytes);
+        imageFileForm.setContent(imageBytes);
         
         String imageFolder = storageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null);
         File processFolder = new File(imageFolder + File.separator + imageFile.getProcessingFolder());
@@ -65,7 +70,7 @@ public class ImageFileController {
             }
         });
         
-        p.setProcessingFiles(files);
+        imageFileForm.setProcessingFiles(files);
         
         File[] folders = processFolder.listFiles(new FileFilter() {
             
@@ -80,11 +85,17 @@ public class ImageFileController {
         
         if (folders != null) {
             for (File folder : folders) {
-                p.getLineFolders().put(folder.getName(), folder.list());
+                imageFileForm.getLineFolders().put(folder.getName(), folder.list());
             }
         }
         
-        model.addAttribute("image", p);
+        // add trainings
+        imageFileForm.setTrainings(new HashMap<>());
+        for (IOCRRun run : imageFile.getOcrRuns()) {
+            imageFileForm.getTrainings().put(run, trainingService.getTrainings(run.getId()));
+        }
+        
+        model.addAttribute("image", imageFileForm);
         model.addAttribute("models", modelManager.getModels(principal.getName(), 0, 40));
         return "files/image";
     }

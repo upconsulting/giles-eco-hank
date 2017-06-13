@@ -3,6 +3,7 @@ package com.upconsulting.gilesecosystem.hank.workflow;
 import java.io.IOException;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
+import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 
@@ -13,6 +14,6 @@ public interface IOCRWorkflowManager {
 
     public abstract IOCRRun startOCR(IImageFile file, String modelId)
             throws FileStorageException, IOException, UnstorableObjectException,
-            DockerConnectionException;
+            DockerConnectionException, UnknownObjectTypeException;
 
 }

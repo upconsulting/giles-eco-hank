@@ -3,7 +3,6 @@ package com.upconsulting.gilesecosystem.hank.service.impl;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -16,13 +15,13 @@ import com.upconsulting.gilesecosystem.hank.db.ITrainingDBClient;
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.exceptions.ImageFileDoesNotExistException;
 import com.upconsulting.gilesecosystem.hank.exceptions.TrainingException;
+import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.IPage;
 import com.upconsulting.gilesecosystem.hank.model.ITraining;
 import com.upconsulting.gilesecosystem.hank.model.impl.Training;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
-import com.upconsulting.gilesecosystem.hank.service.ILineCorrectionManager;
 import com.upconsulting.gilesecosystem.hank.service.IOCRRunManager;
 import com.upconsulting.gilesecosystem.hank.service.ITrainingService;
 import com.upconsulting.gilesecosystem.hank.workflow.IOctopusBridge;
@@ -44,9 +43,6 @@ public class TrainingService implements ITrainingService {
     
     @Autowired
     private IImageFileManager fileManager;
-    
-    @Autowired
-    private ILineCorrectionManager correctionManager;
     
     @Autowired
     private IFileStorageManager storageManager;
@@ -164,6 +160,15 @@ public class TrainingService implements ITrainingService {
             octopusBridge.runTraining(training, file, run);
         } catch (DockerConnectionException e) {
             throw new TrainingException("Could not run training.", e);
+        } catch (UnknownObjectTypeException e) {
+            throw new TrainingException("Could not run training.", e);
+        } catch (UnstorableObjectException e) {
+            throw new TrainingException("Could not run training.", e);
         }
+    }
+    
+    @Override
+    public List<ITraining> getTrainings(String ocrRunId) {
+        return trainingDbClient.getTrainingsByRunId(ocrRunId);
     }
 }

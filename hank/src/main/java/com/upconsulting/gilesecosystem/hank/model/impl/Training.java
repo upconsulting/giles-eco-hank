@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import com.upconsulting.gilesecosystem.hank.model.ITraining;
 
 @Entity
-public class Training implements ITraining {
+public class Training extends Task implements ITraining {
 
     @Id
     private String id;

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
+import com.upconsulting.gilesecosystem.hank.model.ITraining;
 import com.upconsulting.gilesecosystem.hank.model.impl.ImageFile;
 
 public class ImageFileForm extends ImageFile {
@@ -15,6 +16,7 @@ public class ImageFileForm extends ImageFile {
     private byte[] content;
     private IImageFile imageFile;
     private List<IOCRRun> runs;
+    private Map<IOCRRun, List<ITraining>> trainings;
 
     public String[] getProcessingFiles() {
         return processingFiles;
@@ -54,6 +56,14 @@ public class ImageFileForm extends ImageFile {
 
     public void setRuns(List<IOCRRun> runs) {
         this.runs = runs;
+    }
+
+    public Map<IOCRRun, List<ITraining>> getTrainings() {
+        return trainings;
+    }
+
+    public void setTrainings(Map<IOCRRun, List<ITraining>> trainings) {
+        this.trainings = trainings;
     }
 
 }

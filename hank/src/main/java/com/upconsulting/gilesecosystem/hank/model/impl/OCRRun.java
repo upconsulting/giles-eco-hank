@@ -17,7 +17,7 @@ import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.model.IRunStep;
 
 @Entity
-public class OCRRun implements IOCRRun {
+public class OCRRun extends Task implements IOCRRun {
 
     @Id
     private String id;
