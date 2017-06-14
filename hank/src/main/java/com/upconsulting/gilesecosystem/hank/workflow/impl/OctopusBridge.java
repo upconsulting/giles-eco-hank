@@ -50,8 +50,8 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     public boolean runNlbin(IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-nlbin /data/%s/* -o /data/%s",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, ImageFileManager.IMAGE_FOLDER, run.getId());
+        String cmd = String.format("%s run -v %s:/data -u %s ocropus ocropus-nlbin /data/%s/* -o /data/%s",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, propertiesManager.getProperty(Properties.DOCKER_USER), ImageFileManager.IMAGE_FOLDER, run.getId());
         
         boolean success = runCommand(cmd, run);
 
@@ -64,8 +64,8 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     public boolean runPageLayoutAnalysis(IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
         String imageFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-gpageseg '/data/%s/????.bin.png'",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, run.getId());
+        String cmd = String.format("%s run -v %s:/data -u %s ocropus ocropus-gpageseg '/data/%s/????.bin.png'",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), imageFolder, propertiesManager.getProperty(Properties.DOCKER_USER), run.getId());
         
         return runCommand(cmd, run);
     }
@@ -79,8 +79,8 @@ public class OctopusBridge implements IOctopusBridge {
             modelPath = run.getModel().getRelativePath();
         } 
         String userFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), null, null) + File.separator;
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), run.getId());
+        String cmd = String.format("%s run -v %s:/data -u %s ocropus ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder, propertiesManager.getProperty(Properties.DOCKER_USER),  "2", modelPath, imageFile.getId(), run.getId());
         
         return runCommand(cmd, run);
     }
@@ -90,8 +90,8 @@ public class OctopusBridge implements IOctopusBridge {
         String runFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), run.getId()) + File.separator;
         String hocrFileending = ".html";
         
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-hocr '????/??????.bin.png' -o %s%s",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), runFolder, outputFilename, hocrFileending);
+        String cmd = String.format("%s run -v %s:/data -u %s ocropus ocropus-hocr '????/??????.bin.png' -o %s%s",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), runFolder, propertiesManager.getProperty(Properties.DOCKER_USER), outputFilename, hocrFileending);
         
         boolean success = runCommand(cmd, run);
         if (success) {
@@ -106,8 +106,8 @@ public class OctopusBridge implements IOctopusBridge {
     public ListenableFuture<ITraining> runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
         String trainingsFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
         
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o %s %s/*/*.bin.png",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), MODEL_NAME, training.getTrainingFolder());
+        String cmd = String.format("%s run -v %s:/data -u %s ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o %s %s/*/*.bin.png",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, propertiesManager.getProperty(Properties.DOCKER_USER), training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), MODEL_NAME, training.getTrainingFolder());
         
         boolean success = runCommand(cmd, training);
         if (success) {

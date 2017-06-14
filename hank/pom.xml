@@ -21,6 +21,7 @@
         <hank.tmp.folder></hank.tmp.folder>
         <hank.db_files></hank.db_files>
         <docker.location>/usr/local/bin/docker</docker.location>
+        <docker.user>tomcat8</docker.user>
 
         <!-- Tomcat deployment -->
         <tomcat.server.id></tomcat.server.id>
