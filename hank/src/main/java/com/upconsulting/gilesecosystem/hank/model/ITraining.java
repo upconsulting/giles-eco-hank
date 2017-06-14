@@ -1,6 +1,7 @@
 package com.upconsulting.gilesecosystem.hank.model;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import edu.asu.diging.gilesecosystem.util.store.IStorableObject;
 
@@ -37,5 +38,17 @@ public interface ITraining extends ITask, IStorableObject {
     void setStartingModel(String startingModel);
 
     String getStartingModel();
+
+    void setPages(List<Integer> pages);
+
+    List<Integer> getPages();
+
+    void setModelName(String modelName);
+
+    String getModelName();
+
+    void setFinalModel(String finalModel);
+
+    String getFinalModel();
 
 }

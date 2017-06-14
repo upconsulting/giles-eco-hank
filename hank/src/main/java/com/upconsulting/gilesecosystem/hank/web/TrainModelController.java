@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,9 @@ public class TrainModelController {
 
     @Autowired
     private ITrainingService trainingService;
+    
+//    @Autowired
+//    private I
 
     @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/train", method = RequestMethod.POST)
     public String trainModel(@PathVariable String fileId, @PathVariable String runId,
@@ -38,4 +42,8 @@ public class TrainModelController {
         return "redirect:/files/image/" + fileId;
     }
 
+    @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/train", method = RequestMethod.GET)
+    public ResponseEntity<String> getTrainingStatus(@PathVariable String fileId, @PathVariable String runId) {
+        return null;
+    }
 }

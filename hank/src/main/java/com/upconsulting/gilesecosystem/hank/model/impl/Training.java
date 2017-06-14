@@ -1,6 +1,7 @@
 package com.upconsulting.gilesecosystem.hank.model.impl;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,10 +15,14 @@ public class Training extends Task implements ITraining {
     private String id;
     private String runId;
     private String startingModel;
+    private String finalModel;
     private ZonedDateTime date;
     
     private int linesToTrain;
     private int savingFreq;
+    
+    private List<Integer> pages;
+    private String modelName;
     
     private String trainingFolder;
     private String testFolder;
@@ -103,5 +108,29 @@ public class Training extends Task implements ITraining {
     @Override
     public void setStartingModel(String startingModel) {
         this.startingModel = startingModel;
+    }
+    @Override
+    public String getFinalModel() {
+        return finalModel;
+    }
+    @Override
+    public void setFinalModel(String finalModel) {
+        this.finalModel = finalModel;
+    }
+    @Override
+    public List<Integer> getPages() {
+        return pages;
+    }
+    @Override
+    public void setPages(List<Integer> pages) {
+        this.pages = pages;
+    }
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+    @Override
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
     }
 }

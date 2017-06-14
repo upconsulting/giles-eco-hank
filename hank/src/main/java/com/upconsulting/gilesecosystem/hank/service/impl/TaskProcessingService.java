@@ -41,6 +41,7 @@ public class TaskProcessingService implements ITaskProcessingService {
     public void finishTask(ITask task, boolean success) throws UnstorableObjectException, UnknownObjectTypeException {
         task.setDone(true);
         task.setSuccess(success);
+        
         saveTask(task);
     }
     

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
@@ -41,6 +41,8 @@ public class OctopusBridge implements IOctopusBridge {
     
     @Autowired
     private ITaskProcessingService processingService;
+    
+    private final String MODEL_NAME = "model.pyrnn.gz";
 
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.service.impl.IOctopusBridge#runNlbin(com.upconsulting.gilesecosystem.hank.model.impl.ImageFile)
@@ -96,18 +98,19 @@ public class OctopusBridge implements IOctopusBridge {
     
     @Override
     @Async
-    public Future<String> runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
+    public ListenableFuture<ITraining> runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
         String trainingsFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
         
-        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o model.pyrnn.gz %s/*/*.bin.png",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), training.getTrainingFolder());
+        String cmd = String.format("%s run -v %s:/data ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o %s %s/*/*.bin.png",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), MODEL_NAME, training.getTrainingFolder());
         
         boolean success = runCommand(cmd, training);
         if (success) {
-            return new AsyncResult<String>("model.pyrnn.gz");
+            training.setModelName(MODEL_NAME);
+            return new AsyncResult<ITraining>(training);
         }
         
-        return new AsyncResult<String>(null);
+        return new AsyncResult<ITraining>(null);
     }
     
     private boolean runCommand(String cmd, ITask task) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {

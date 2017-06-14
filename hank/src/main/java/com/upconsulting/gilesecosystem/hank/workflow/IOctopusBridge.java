@@ -1,6 +1,6 @@
 package com.upconsulting.gilesecosystem.hank.workflow;
 
-import java.util.concurrent.Future;
+import org.springframework.util.concurrent.ListenableFuture;
 
 import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException;
 import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
@@ -24,7 +24,7 @@ public interface IOctopusBridge {
     public abstract String runHOCROutput(IImageFile imageFile, IOCRRun run, String outputFilename)
             throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException;
 
-    Future<String> runTraining(ITraining training, IImageFile imageFile, IOCRRun run)
+    ListenableFuture<ITraining> runTraining(ITraining training, IImageFile imageFile, IOCRRun run)
             throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException;
 
 }

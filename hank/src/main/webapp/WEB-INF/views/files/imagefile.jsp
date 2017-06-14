@@ -7,7 +7,7 @@ $(function() {
        elem = $(elem);
        var dateText = elem.text();
        if (dateText.endsWith(']')) {
-           dateText = dateText.substring(dateText.indexOf('['));
+           dateText = dateText.substring(0, dateText.indexOf('['));
        }
        var date = new Date(dateText);
        elem.text(date.toLocaleDateString());
@@ -93,7 +93,9 @@ pre {
 	    <div id="trainingList" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="headingOne">
         <c:forEach items="${entry.value}" var="training">
 	      <div class="list-group">
-	        ${training.id} on ${training.date}
+	        ${training.id} on ${training.date}<br>
+	        Final model: <c:if test="${not empty training.finalModel}">${training.finalModel}</c:if>
+	        <br>
 	        <c:if test="${training.done}"><span class="label label-success">Done</span></c:if>
 	        <c:if test="${not training.done}"><span class="label label-info">Running</span></c:if>
 	        
