@@ -12,4 +12,6 @@ public interface ITrainingService {
 
     List<ITraining> getTrainings(String ocrRunId);
 
+    ITraining getTraining(String id);
+
 }

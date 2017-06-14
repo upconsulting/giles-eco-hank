@@ -28,6 +28,8 @@ public class OCRRun extends Task implements IOCRRun {
     private IOCRModel model;
     @OneToMany(cascade = CascadeType.ALL, targetEntity=RunStep.class, fetch=FetchType.EAGER)
     private List<IRunStep> steps;
+    
+    private String trainingId;
 
     /*
      * (non-Javadoc)
@@ -129,5 +131,15 @@ public class OCRRun extends Task implements IOCRRun {
     @Override
     public void setHocrFile(String hocrFile) {
         this.hocrFile = hocrFile;
+    }
+
+    @Override
+    public String getTrainingId() {
+        return trainingId;
+    }
+
+    @Override
+    public void setTrainingId(String trainingId) {
+        this.trainingId = trainingId;
     }
 }

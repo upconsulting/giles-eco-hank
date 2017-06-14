@@ -71,8 +71,13 @@ public class OctopusBridge implements IOctopusBridge {
     }
     
     @Override
-    public boolean runLineRecognition(IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
-        String modelPath = run.getModel().getRelativePath();
+    public boolean runLineRecognition(IImageFile imageFile, IOCRRun run, ITraining training) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
+        String modelPath = null;
+        if (training != null && training.getFinalModel() != null) {
+            modelPath = imageFile.getId() + File.separator + training.getId() + File.separator + training.getFinalModel();
+        } else {
+            modelPath = run.getModel().getRelativePath();
+        } 
         String userFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), null, null) + File.separator;
         String cmd = String.format("%s run -v %s:/data ocropus ocropus-rpred -Q %s -m /data/%s '/data/%s/%s/????/??????.bin.png'",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), userFolder,  "2", modelPath, imageFile.getId(), run.getId());

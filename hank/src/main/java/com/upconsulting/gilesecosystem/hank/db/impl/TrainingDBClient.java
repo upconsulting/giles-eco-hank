@@ -31,7 +31,7 @@ public class TrainingDBClient extends DatabaseClient<ITraining> implements ITrai
     }
 
     @Override
-    protected ITraining getById(String id) {
+    public ITraining getById(String id) {
         return em.find(Training.class, id);
     }
 

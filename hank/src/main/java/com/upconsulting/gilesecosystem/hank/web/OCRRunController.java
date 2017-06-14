@@ -14,6 +14,7 @@ import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeExceptio
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
+import com.upconsulting.gilesecosystem.hank.service.ITrainingService;
 import com.upconsulting.gilesecosystem.hank.workflow.IOCRWorkflowManager;
 
 import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
@@ -28,6 +29,9 @@ public class OCRRunController {
     @Autowired
     private IOCRWorkflowManager workflowManager;
     
+    @Autowired
+    private ITrainingService trainingService;
+    
 
     @RequestMapping(value = "/files/image/{id}/ocr/run", method = RequestMethod.POST)
     public String runOCR(@RequestParam String modelId, @PathVariable String id) throws FileStorageException, IOException, UnstorableObjectException, DockerConnectionException, UnknownObjectTypeException {
@@ -41,5 +45,16 @@ public class OCRRunController {
         imageManager.storeOrUpdateImageFile(file);        
         
         return "redirect:/files/image/" + id;
+    }
+    
+    @RequestMapping(value = "/files/image/{fileId:IMG[0-9a-zA-Z]+}/{runId:RUN[0-9a-zA-Z]+}/{trainingId:TRAIN[0-9a-zA-Z]+}/ocr/run", method = RequestMethod.POST)
+    public String runOCRWithTrainingModel(@PathVariable String fileId, @PathVariable String runId, @PathVariable String trainingId) throws FileStorageException, IOException, UnstorableObjectException, DockerConnectionException, UnknownObjectTypeException {
+       
+        IImageFile file = imageManager.getImageFile(fileId);
+        IOCRRun run = workflowManager.startOCRWithTrainingModel(file, trainingService.getTraining(trainingId));
+        file.getOcrRuns().add(run);
+        imageManager.storeOrUpdateImageFile(file);        
+        
+        return "redirect:/files/image/" + fileId;
     }
 }

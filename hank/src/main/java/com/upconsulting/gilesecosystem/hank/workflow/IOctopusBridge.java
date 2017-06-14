@@ -18,7 +18,7 @@ public interface IOctopusBridge {
     public abstract boolean runPageLayoutAnalysis(IImageFile imageFile, IOCRRun run)
             throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException;
 
-    public abstract boolean runLineRecognition(IImageFile imageFile, IOCRRun run)
+    public abstract boolean runLineRecognition(IImageFile imageFile, IOCRRun run, ITraining training)
             throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException;
 
     public abstract String runHOCROutput(IImageFile imageFile, IOCRRun run, String outputFilename)

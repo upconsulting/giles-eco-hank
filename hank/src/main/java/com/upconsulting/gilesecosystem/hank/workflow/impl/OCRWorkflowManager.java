@@ -11,6 +11,7 @@ import com.upconsulting.gilesecosystem.hank.exceptions.DockerConnectionException
 import com.upconsulting.gilesecosystem.hank.exceptions.UnknownObjectTypeException;
 import com.upconsulting.gilesecosystem.hank.model.IImageFile;
 import com.upconsulting.gilesecosystem.hank.model.IOCRRun;
+import com.upconsulting.gilesecosystem.hank.model.ITraining;
 import com.upconsulting.gilesecosystem.hank.model.impl.OCRRun;
 import com.upconsulting.gilesecosystem.hank.model.impl.StepStatus;
 import com.upconsulting.gilesecosystem.hank.model.impl.StepType;
@@ -63,7 +64,31 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
             return runInfo;
         }
 
-        if (runLineRecognition(file, runInfo) == null) {
+        if (runLineRecognition(file, runInfo, null) == null) {
+            return runInfo;
+        }
+        
+        runHOCROutput(file, runInfo);
+
+        return runInfo;      
+    }
+    
+    @Override
+    public IOCRRun startOCRWithTrainingModel(IImageFile file, ITraining training) throws DockerConnectionException, UnstorableObjectException, UnknownObjectTypeException {
+        IOCRRun runInfo = new OCRRun();
+        runInfo.setTrainingId(training.getId());
+        runInfo.setDate(LocalDateTime.now());
+        runManager.saveOCRRun(runInfo);
+
+        if (runNlb(file, runInfo) == null) {
+            return runInfo;
+        }
+
+        if (runLayoutAnalysis(file, runInfo) == null) {
+            return runInfo;
+        }
+
+        if (runLineRecognition(file, runInfo, training) == null) {
             return runInfo;
         }
         
@@ -108,11 +133,11 @@ public class OCRWorkflowManager implements IOCRWorkflowManager {
         return imageFileManager.storeOrUpdateImageFile(file);
     }
 
-    private IImageFile runLineRecognition(IImageFile file, IOCRRun runInfo)
+    private IImageFile runLineRecognition(IImageFile file, IOCRRun runInfo, ITraining training)
             throws DockerConnectionException, UnstorableObjectException, UnknownObjectTypeException {
         runInfo.getSteps().add(runManager.createRunStep(StepType.LINE_RECOGNITION));
 
-        boolean success = octopusBridge.runLineRecognition(file, runInfo);
+        boolean success = octopusBridge.runLineRecognition(file, runInfo, training);
         if (success) {
             file.setStatus(WorkflowStatus.LINES_RECOGNIZED);
             runInfo.setStepStatus(StepType.LINE_RECOGNITION, StepStatus.SUCCEEDED);

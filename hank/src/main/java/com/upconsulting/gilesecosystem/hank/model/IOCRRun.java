@@ -30,4 +30,8 @@ public interface IOCRRun extends ITask, IStorableObject {
 
     public abstract String getHocrFile();
 
+    void setTrainingId(String trainingId);
+
+    String getTrainingId();
+
 }

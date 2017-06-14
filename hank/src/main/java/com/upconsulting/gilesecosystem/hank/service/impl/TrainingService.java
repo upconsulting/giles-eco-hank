@@ -58,6 +58,10 @@ public class TrainingService implements ITrainingService {
     @Autowired
     private ApplicationContext context;
 
+    @Override
+    public ITraining getTraining(String id) {
+        return trainingDbClient.getById(id);
+    }
     /*
      * (non-Javadoc)
      * 

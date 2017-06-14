@@ -59,10 +59,13 @@ pre {
 <c:set value="${entry.key}" var="run" />
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">OCR run on <span class="date">${run.date}</span> <a href="<c:url value="/files/image/${image.id}/${run.id}/download" />"><div class="pull-right"><i class="fa fa-download" aria-hidden="true"></i>  Download</a></div></h3>
-  </div>
-  <div class="panel-body">
-    Model used: <b>${run.model.title}</b> (${run.model.filename})
+    <h3 class="panel-title">OCR run on <span class="date">${run.date}</span> <a href="<c:url value="/files/image/${image.id}/${run.id}/download" />"><div class="pull-right"><i class="fa fa-download" aria-hidden="true"></i>  Download</a>
+  </div></h3>
+</div>
+<div class="panel-body">
+    Model used: 
+    <c:if test="${not empty run.model}"></c:if>
+    <b>${run.model.title}</b> (${run.model.filename})
     <br>
     Steps completed:
     <ul>
@@ -76,21 +79,21 @@ pre {
     <a href="<c:url value="/files/image/${image.id}/${run.id}/text" />"><i class="fa fa-font" aria-hidden="true"></i> OCR Result as HOCR</a>
     <br><a href="<c:url value="/files/image/${image.id}/${run.id}/pages" />"><i class="fa fa-eye" aria-hidden="true"></i> Correct Pages</a>
     <span class="pull-right">
-    <a class="btn btn-link trainingDialogLink" data-url="${actionUrlTrain}" data-runid="${run.id}" data-imageid="${image.id}">
-	   <i class="fa fa-cog" aria-hidden="true"></i> Train Model
-	</a>
+	    <a class="btn btn-link trainingDialogLink" data-url="${actionUrlTrain}" data-runid="${run.id}" data-imageid="${image.id}">
+		   <i class="fa fa-cog" aria-hidden="true"></i> Train Model
+		</a>
 	</span>
 	
-	<div class="panel-group" style="margin-top: 10px;" id="trainingListPanel" role="tablist" aria-multiselectable="true">
+	<div class="panel-group" style="margin-top: 10px;" id="trainingListPanel${run.id}" role="tablist" aria-multiselectable="true">
 	  <div class="panel panel-default">
-	    <div class="panel-heading" role="tab" id="headingOne" style="padding: 4px;">
+	    <div class="panel-heading" role="tab" id="heading${run.id}" style="padding: 4px;">
 	      <span class="panel-title">
-	        <a role="button" data-toggle="collapse" data-parent="#trainingListPanel" href="#trainingList" aria-expanded="false" aria-controls="trainingList">
+	        <a role="button" data-toggle="collapse" data-parent="#trainingListPanel${run.id}" href="#trainingList${run.id}" aria-expanded="false" aria-controls="trainingList">
 	          <small>Trainings</small>
 	        </a>
 	      </span>
 	    </div>
-	    <div id="trainingList" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="headingOne">
+	    <div id="trainingList${run.id}" class="panel-collapse collapse out" role="tabpanel" aria-labelledby="heading${run.id}">
         <c:forEach items="${entry.value}" var="training">
 	      <div class="list-group">
 	        ${training.id} on ${training.date}<br>
@@ -117,6 +120,15 @@ pre {
 		       </div>
 		    </div>
 		    </div>
+		    <!-- <a class="btn btn-link trainingDialogLink" data-url="${actionUrlTrain}" data-runid="${run.id}" data-imageid="${image.id}">
+		       <i class="fa fa-cog" aria-hidden="true"></i> Continue training
+		    </a>  -->
+		    <c:url value="/files/image/${image.id}/${run.id}/${training.id}/ocr/run" var="ocrTrainModelUrl" />
+		    <form action="${ocrTrainModelUrl}" class="form-inline" method="POST">
+                  <input id="csrfInput" type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+			      
+			      <button type="submit" class="btn btn-primary btn-link">Run OCR with this model</button>
+		    </form>
 	        </c:if>
 	        
 	        <!-- log for running trainings -->
