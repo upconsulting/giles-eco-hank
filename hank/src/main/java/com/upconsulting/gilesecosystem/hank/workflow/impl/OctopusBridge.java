@@ -90,7 +90,7 @@ public class OctopusBridge implements IOctopusBridge {
         String runFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), run.getId()) + File.separator;
         String hocrFileending = ".html";
         
-        String cmd = String.format("%s run -v %s:/data --rm -u %s ocropus ocropus-hocr '????/??????.bin.png' -o %s%s",
+        String cmd = String.format("%s run -v %s:/data --rm -u %s ocropus ocropus-hocr '/data/????/??????.bin.png' -o /data/%s%s",
                 propertiesManager.getProperty(Properties.DOCKER_LOCATION), runFolder, propertiesManager.getProperty(Properties.DOCKER_USER), outputFilename, hocrFileending);
         
         boolean success = runCommand(cmd, run);
