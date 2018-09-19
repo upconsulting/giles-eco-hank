@@ -49,7 +49,7 @@ public class OctopusBridge implements IOctopusBridge {
     private ITaskProcessingService processingService;
     
     private final String MODEL_NAME = "model.pyrnn.gz";
-    private final String MODEL_NAME_PATTERN = "model-%10d.pyrnn.gz";
+    private final String MODEL_NAME_PATTERN = "model-%010d.pyrnn.gz";
 
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.service.impl.IOctopusBridge#runNlbin(com.upconsulting.gilesecosystem.hank.model.impl.ImageFile)
@@ -126,7 +126,7 @@ public class OctopusBridge implements IOctopusBridge {
                 
                 @Override
                 public boolean accept(File dir, String name) {
-                    String pattern = MODEL_NAME_PATTERN.replace("%10d", "\\d{8}");
+                    String pattern = MODEL_NAME_PATTERN.replace("%010d", "\\d{8}");
                     if (name.matches(pattern)) {
                         return true;
                     }
