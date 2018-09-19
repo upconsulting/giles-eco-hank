@@ -2,8 +2,14 @@ package com.upconsulting.gilesecosystem.hank.workflow.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +49,7 @@ public class OctopusBridge implements IOctopusBridge {
     private ITaskProcessingService processingService;
     
     private final String MODEL_NAME = "model.pyrnn.gz";
+    private final String MODEL_NAME_PATTERN = "model-%10d.pyrnn.gz";
 
     /* (non-Javadoc)
      * @see com.upconsulting.gilesecosystem.hank.service.impl.IOctopusBridge#runNlbin(com.upconsulting.gilesecosystem.hank.model.impl.ImageFile)
@@ -104,14 +111,35 @@ public class OctopusBridge implements IOctopusBridge {
     @Override
     @Async
     public ListenableFuture<ITraining> runTraining(ITraining training, IImageFile imageFile, IOCRRun run) throws DockerConnectionException, UnknownObjectTypeException, UnstorableObjectException {
-        String trainingsFolder = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
+        String trainingsFolderPath = fileStorageManager.getAndCreateStoragePath(imageFile.getUsername(), imageFile.getId(), training.getId());
         
-        String cmd = String.format("%s run -v %s:/data --rm -u %s ocropus ocropus-rtrain -N %s -F %s -c %s/*/*.gt.txt %s/*/*.gt.txt -o %s %s/*/*.bin.png",
-                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolder, propertiesManager.getProperty(Properties.DOCKER_USER), training.getLinesToTrain(), training.getSavingFreq(), training.getTrainingFolder(), training.getTestFolder(), MODEL_NAME, training.getTrainingFolder());
+        String cmd = String.format("%s run -v %s:/data --rm -u %s ocropus ocropus-rtrain -N %s -F %s /data/%s/*/*.bin.png --load /data/%s -o /data/%s -c /data/%s/*/*.gt.txt /data/%s/*/*.gt.txt",
+                propertiesManager.getProperty(Properties.DOCKER_LOCATION), trainingsFolderPath, 
+                propertiesManager.getProperty(Properties.DOCKER_USER), training.getLinesToTrain(), 
+                training.getSavingFreq(), training.getTrainingFolder(), training.getModelName(), 
+                MODEL_NAME_PATTERN, training.getTrainingFolder(), training.getTestFolder());
         
         boolean success = runCommand(cmd, training);
         if (success) {
-            training.setModelName(MODEL_NAME);
+            File trainingsFolder = new File(trainingsFolderPath);
+            String[] modelFiles = trainingsFolder.list(new FilenameFilter() {
+                
+                @Override
+                public boolean accept(File dir, String name) {
+                    String pattern = MODEL_NAME_PATTERN.replace("%10d", "\\d{8}");
+                    if (name.matches(pattern)) {
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            List<String> modelFilesList = Arrays.asList(modelFiles);
+            String modelName = training.getModelName();
+            if (!modelFilesList.isEmpty()) {
+                modelName = modelFilesList.stream().sorted((o1, o2) -> o2.compareTo(o1)).collect(Collectors.toList()).get(0);
+            } 
+            
+            training.setModelName(modelName);
             return new AsyncResult<ITraining>(training);
         }
         

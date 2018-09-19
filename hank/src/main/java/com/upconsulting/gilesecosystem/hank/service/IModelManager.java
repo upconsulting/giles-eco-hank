@@ -16,4 +16,6 @@ public interface IModelManager {
 
     public abstract IOCRModel getModel(String id);
 
+    byte[] getModelAsBytes(IOCRModel model);
+
 }

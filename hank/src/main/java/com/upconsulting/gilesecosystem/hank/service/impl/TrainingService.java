@@ -24,10 +24,12 @@ import com.upconsulting.gilesecosystem.hank.model.IPage;
 import com.upconsulting.gilesecosystem.hank.model.ITraining;
 import com.upconsulting.gilesecosystem.hank.model.impl.Training;
 import com.upconsulting.gilesecosystem.hank.service.IImageFileManager;
+import com.upconsulting.gilesecosystem.hank.service.IModelManager;
 import com.upconsulting.gilesecosystem.hank.service.IOCRRunManager;
 import com.upconsulting.gilesecosystem.hank.service.ITrainingService;
 import com.upconsulting.gilesecosystem.hank.workflow.IOctopusBridge;
 
+import edu.asu.diging.gilesecosystem.util.exceptions.FileStorageException;
 import edu.asu.diging.gilesecosystem.util.exceptions.UnstorableObjectException;
 import edu.asu.diging.gilesecosystem.util.files.IFileStorageManager;
 
@@ -45,6 +47,9 @@ public class TrainingService implements ITrainingService {
 
     @Autowired 
     private IImageFileManager fileManager;
+    
+    @Autowired
+    private IModelManager modelManager;
 
     @Autowired 
     private IFileStorageManager storageManager;
@@ -89,7 +94,22 @@ public class TrainingService implements ITrainingService {
                 file.getId(), trainingId, TRAIN_FOLDER);
         File testFolder = storageManager.createFolder(file.getUsername(), file.getId(),
                 trainingId, TEST_FOLDER);
-
+        
+        // if we haven't trained yet, make sure model file is in training folder
+        byte[] modelBytes = storageManager.getFileContent(file.getUsername(), file.getId(), trainingId, run.getModel().getFilename());
+        if (modelBytes == null) {
+            modelBytes = modelManager.getModelAsBytes(run.getModel());
+            try {
+                storageManager.saveFile(file.getUsername(), file.getId(), trainingId, run.getModel().getFilename(), modelBytes);
+            } catch (FileStorageException e1) {
+                throw new TrainingException("Could not copy model file.", e1);
+            }
+            
+            if (training.getModelName() == null || training.getModelName().isEmpty()) {
+                training.setModelName(run.getModel().getFilename());
+            }
+        }
+        
         List<IPage> pages = runManager.getPages(runId, null);
         for (IPage page : pages) {
             int pagenr = page.getPage();

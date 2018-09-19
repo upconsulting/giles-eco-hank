@@ -55,6 +55,11 @@ public class ModelManager implements IModelManager {
     }
     
     @Override
+    public byte[] getModelAsBytes(IOCRModel model) {
+        return fileStorageManager.getFileContent(model.getUsername(), MODEL_FOLDER, model.getId(), model.getFilename());
+    }
+    
+    @Override
     public List<IOCRModel> getModels(String username, int start, int numberOfResults) {
         if (start < 0) {
             start = 0;
